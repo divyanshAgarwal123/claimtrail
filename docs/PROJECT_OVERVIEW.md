@@ -2,7 +2,7 @@
 
 ClaimTrail is a local evidence workbench for investigating task-completion claims in collaborating agent groups. It places an agent's message beside recorded actions, outputs and artifact checks, with separate lanes for observations before the claim and later corroboration. A repository change, a deployment and functioning browser behavior need different evidence.
 
-This project overview is AI-assisted project documentation, not a response to the participant-only submission form. The accompanying presentation is a rehearsal asset; no submission or publication has occurred.
+This project overview is AI-assisted project documentation, not a response to the participant-only submission form. The accompanying presentation is a rehearsal asset. The code is published at [divyanshAgarwal123/claimtrail](https://github.com/divyanshAgarwal123/claimtrail); submission of the event form remains pending.
 
 ## What works
 
