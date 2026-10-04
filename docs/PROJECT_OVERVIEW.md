@@ -1,24 +1,21 @@
 # ClaimTrail — from completion claims to evidence
 
-ClaimTrail helps investigators check whether an AI agent’s completion message is supported by recorded computer actions and artifacts. Its local workbench separates observations before the message from later corroboration, preserving the scope of repository, deployment and browser evidence.
+ClaimTrail is a local investigation workbench for tracing AI agents’ completion messages to recorded computer actions and artifacts. It brings messages, tool outputs and artifact checks into an inspectable timeline, with actor identity and claim-relative timestamps attached to each record.
 
-Investigators can navigate episodes, filter by actor and time, search records, follow commit/PR identifiers and inspect full sources. Linked summaries highlight assertions, observations and unresolved questions. Reviewers can annotate claim units, cite evidence and export assessments. Saves preserve provenance, check source hashes and reject conflicting updates.
+Investigators can navigate episodes, search records, filter by actor and time, follow commit and pull-request identifiers, and open full sources. Linked summaries organize the assertion and its supporting context. Individual claim units can be annotated, connected to source citations and exported with their assessment rationale.
 
-An exploratory **AI-assisted review of 25 selected episodes** produced 64 claim units with 74 distinct non-chat source citations. Two separate development investigations illustrate the workflow:
+Separate before-and-after lanes preserve the sequence of events across collaborating agents. Repository operations, deployment checks and browser-related records retain their own source context, allowing an investigator to follow each stage of a task through the recorded workflow. Saved citations appear directly in the timeline and open their original records.
 
-- **Repository presence versus live state:** integration was supported in repository records, while live state at claim time remained unresolved. A collaborator’s local-source check occurred 0.278 seconds later.
-- **Eventual success versus earlier timing:** a rejected push and successful rebase were followed by remote corroboration 18.620 seconds after the claim. The earlier successful-push timing remained unverified.
+The application includes provenance-preserving saves, source-hash checks, conflict detection and structured exports. It checks citation IDs, record ownership and timestamp boundaries, preserves assessment origin and policy, and protects saved annotations when a source changes or another tab has saved a newer version.
 
-The public demo includes three invented teaching cases and runs with Python 3.9+ and a local browser:
+The public demo contains three invented teaching cases and runs with Python 3.9+ and a local browser:
 
 ```bash
 python3 -B src/review_app.py --demo --port 8766
 ```
 
-Open http://127.0.0.1:8766/. The demo needs no dataset access or package installation. [Research instructions](REPRODUCE_RESEARCH.md) describe the separately authorized input path.
+Open http://127.0.0.1:8766/. The demo uses Python’s standard library and requires no account or package installation. [Research instructions](REPRODUCE_RESEARCH.md) describe the authorized dataset workflow and included analysis scripts.
 
-Reliability checks passed: **32 project tests, 23 tests in the delivered package and nine Chromium check groups**, including save/reload, conflicting edits and source-change rejection. The public repository’s automated tests also passed.
+Executed software checks passed: **32 project tests, 23 tests in the delivered package and nine Chromium check groups**, covering citation save/reload, conflicting edits, narrow layouts and source-change rejection. GitHub’s automated tests also passed.
 
-The research uses a partial export; screenshots were not inspected and independent human validation is absent. The assessments establish no accuracy or agent failure rate. Timestamp offsets describe record ordering, not transmission delays. Missing records leave questions unresolved. The published package excludes gated records and real annotations.
-
-Source: **AI Digest, “AI Village dataset,” 2026**, [dataset card](https://huggingface.co/datasets/aidigestorg/ai-village). Pinned revisions and file hashes are in [the provenance manifest](provenance.json). No training or fine-tuning was performed.
+Research source: **AI Digest, “AI Village dataset,” 2026**, [dataset card](https://huggingface.co/datasets/aidigestorg/ai-village). Pinned revisions and file hashes are recorded in [the provenance manifest](provenance.json). No training or fine-tuning was performed.
