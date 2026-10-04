@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClaimTrail · Evidence Review</title>
+  <link rel="stylesheet" href="/review.css">
+  <script defer src="/review.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brandmark">CT</span><div><strong>ClaimTrail</strong><small>Evidence review · local only</small></div></div>
+    <div class="topright"><span id="progress">Loading queue…</span><a id="export-reviews" href="/api/export" download>Export human labels</a></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-head"><h2 id="queue-heading">Frozen review queue</h2><p id="queue-summary">Loading episodes…</p>
+        <label class="sr-only" for="queue-query">Find an episode</label><input id="queue-query" type="search" placeholder="Find agent or message">
+        <label class="sr-only" for="queue-status">Review state</label><select id="queue-status"><option value="all">All episodes</option><option value="open">Needs review</option><option value="unreviewed">Unreviewed</option><option value="partial">Partly labeled</option><option value="complete">Fully labeled</option></select>
+      </div>
+      <nav id="episode-list" aria-label="Review episodes"></nav>
+    </aside>
+    <main id="workspace">
+      <div id="loading" class="empty">Loading review bundle…</div>
+      <div id="episode-view" hidden>
+        <section class="intro">
+          <div class="context-line"><span id="data-mode"></span><span id="position"></span></div>
+          <h1 id="episode-heading"></h1>
+          <div id="episode-meta" class="meta"></div>
+          <div class="episode-actions"><button id="previous-episode" type="button">← Previous</button><button id="next-episode" type="button">Next →</button><button id="next-open" type="button">Next needing review</button></div>
+          <div class="callout"><strong>Claim → observed action → review</strong><p id="episode-guidance"></p>Retrieved turns are leads, not verdicts. Keep missing or conflicting evidence unresolved.</div>
+          <p id="review-provenance" class="review-provenance" role="status"></p>
+          <details class="policy-details"><summary>Saved review policy</summary><pre id="assessment-policy"></pre></details>
+        </section>
+        <section id="case-summary" class="case-summary" aria-labelledby="case-summary-heading">
+          <div class="section-title"><div><h2 id="case-summary-heading">Case at a glance</h2><p id="summary-attribution"></p></div><a href="#original-message">Read full claim ↓</a></div>
+          <p id="summary-assertion" class="summary-assertion"></p>
+          <div class="summary-grid">
+            <section><h3>Before / at claim</h3><div id="summary-before"></div></section>
+            <section class="summary-later"><h3>Later evidence / context</h3><div id="summary-later"></div></section>
+            <section class="summary-unresolved"><h3>Still unresolved</h3><ul id="summary-unresolved"></ul></section>
+          </div>
+          <p id="summary-note" class="summary-note"></p><p id="summary-save-state" class="summary-note" aria-live="polite"></p>
+        </section>
+        <div class="columns">
+          <section class="claim-pane">
+            <div class="section-title"><div><h2>Original message</h2><p id="message-description">Exact agent chat text from the pinned export</p></div></div>
+            <pre id="original-message" class="original"></pre>
+            <div class="section-title review-title"><div><h2>Atomic claims</h2><p id="unit-description">Suggested text spans are editable and unlabeled. Split or remove them as needed.</p></div><button id="add-unit" class="subtle" type="button">+ Add unit</button></div>
+            <div id="units"></div>
+            <p id="review-readiness" class="review-readiness" aria-live="polite"></p>
+            <div class="savebar"><span id="save-status" role="status">No human labels saved yet.</span><button id="save-review" class="primary" type="button">Save review</button></div>
+          </section>
+          <section class="evidence-pane">
+            <div class="section-title"><div><h2>Evidence timeline</h2><p>Time-stamped action and tool-output excerpts</p></div><span id="evidence-count" class="count"></span></div>
+            <p id="timeline-summary" class="timeline-summary"></p>
+            <details class="provenance"><summary>Data source and coverage limits</summary><p id="provenance"></p></details>
+            <details class="baseline"><summary>Lexical baseline: top 3 session goals</summary><div id="baseline-sessions"></div><p>These goals are agent-authored intentions. They only point to places to inspect.</p></details>
+            <div class="evidence-filters"><label>Time<select id="lead-phase"><option value="all">Before + after</option><option value="before">Before claim</option><option value="after">After claim</option></select></label><label>Actor<select id="lead-actor"><option value="all">All agents</option><option value="claimant">Claimant</option><option value="other">Other agents</option></select></label><label>Lead source<select id="lead-route"><option value="all">All leads</option><option value="identifier">Identifier</option><option value="lexical">Lexical turn</option><option value="baseline">Baseline session</option><option value="recent">Recent turn</option></select></label></div>
+            <div id="evidence-list" class="evidence-list"></div>
+            <form id="search-form" class="search-form">
+              <h3>Search more turns</h3>
+              <p>Search within 24 hours before and 2 hours after this claim. Results are retrieval candidates.</p>
+              <input id="search-query" type="search" aria-label="Search evidence text" placeholder="Artifact, command, error, or phrase" maxlength="500">
+              <div class="search-controls"><select id="search-scope" aria-label="Search actor"><option value="claimant">Claimant only</option><option value="all">All agents</option></select><select id="search-phase" aria-label="Search time"><option value="before">Before claim</option><option value="after">After claim</option><option value="both">Both</option></select><button type="submit">Search</button></div>
+              <button id="search-selected-unit" class="subtle" type="button">Search selected atomic claim</button>
+            </form>
+            <div id="search-note" class="search-note" role="status"></div>
+            <div id="search-results" class="evidence-list"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <dialog id="record-dialog"><div class="dialog-head"><h2>Full turn record</h2><button id="close-dialog" type="button">Close</button></div><div id="record-body"></div></dialog>
+</body>
+</html>

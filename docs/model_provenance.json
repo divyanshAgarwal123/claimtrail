@@ -1,0 +1,14 @@
+{
+  "purpose": "pretrained local semantic session-goal retrieval; inference only",
+  "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "access": "pre-existing local Hugging Face cache; no model weights downloaded for this project",
+  "pooling": "attention-mask mean pooling, L2 normalization, maximum 256 tokens",
+  "files": {
+    "model.safetensors": {"bytes": 90868376, "sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db"},
+    "tokenizer.json": {"bytes": 466247, "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"},
+    "config.json": {"bytes": 612, "sha256": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41"},
+    "1_Pooling/config.json": {"bytes": 190, "sha256": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23"}
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "data_mode": "synthetic_demo",
+  "files": {
+    ".github/workflows/check.yml": {
+      "bytes": 282,
+      "sha256": "5c7dd922c187fcd6add378a343788028f4e5d353c2c02ce2ab0ab91d08043f34"
+    },
+    ".gitignore": {
+      "bytes": 35,
+      "sha256": "a58ab8b82d49b68ae3296598474299159b399bb8bcb82139a3268a44dbbee61e"
+    },
+    "README.md": {
+      "bytes": 3441,
+      "sha256": "1f7df0373aa5d42485e25bb96ddddfc6d0c946f17341de355d9151e0ecf1545b"
+    },
+    "docs/PROJECT_OVERVIEW.md": {
+      "bytes": 5202,
+      "sha256": "a2b9fff0f9cdb587586e1a83ce970618d63fe8751eeeadbadcdd728310a007a3"
+    },
+    "docs/REPRODUCE_RESEARCH.md": {
+      "bytes": 3044,
+      "sha256": "3dcb3966f125bec8b187caa8ff3e1fa8177a70454ca2ad37d50ee219578ecf51"
+    },
+    "docs/SYNTHETIC_DEMO.md": {
+      "bytes": 4116,
+      "sha256": "de70caf708b23f015dac209567a7c80637b29f0074adf1eedb1ae7b88960bf8f"
+    },
+    "docs/images/claimtrail-summary-desktop.png": {
+      "bytes": 186492,
+      "sha256": "f6f170e3ba765fbb9db2f24e9698945b031f932f5c629bfdc62b250a945b1bec"
+    },
+    "docs/model_provenance.json": {
+      "bytes": 962,
+      "sha256": "2db0f57a413652d3bcc999dcb16dbf95c350d951866dcd48ea92017b9faf06f4"
+    },
+    "docs/provenance.json": {
+      "bytes": 8081,
+      "sha256": "87484629e8f5f458bab9a81a864a908721cf73963322aae323fa34693ba75fc6"
+    },
+    "requirements-semantic.txt": {
+      "bytes": 288,
+      "sha256": "7d30e6ee6aa94e8d9bd0c57acdd41814da1809295b9f871999994b119de3d1d6"
+    },
+    "src/audit_project.py": {
+      "bytes": 5680,
+      "sha256": "a6a9cdf3232dbb68d9f0dee7bc59f7a4a76295d6638770313132c2124cc817f6"
+    },
+    "src/case_summary.py": {
+      "bytes": 3355,
+      "sha256": "29dca2384415573c7667e3bc38f696f8ed2b8e6f7d37f5e8c020fb0a88542ca2"
+    },
+    "src/claimtrail.py": {
+      "bytes": 7701,
+      "sha256": "14ec8987eed52db0f7fda9706cb57c489e92684704d36e91d695bd1c814cb11f"
+    },
+    "src/demo_data.py": {
+      "bytes": 6349,
+      "sha256": "f51ddca896e2f94f4dcdd643c9e1e89abe56d3da30077ec615825103c71cd597"
+    },
+    "src/evaluate_reviews.py": {
+      "bytes": 8303,
+      "sha256": "29c43dc5b1134e30a6d5855996d2afca55fb5eb13792a7f0016bc6c305b229c9"
+    },
+    "src/extract_turns.py": {
+      "bytes": 2224,
+      "sha256": "5a279da304ed9d9d958441ac5789c88d5d7e7ec558fce17877a419e1f2bad823"
+    },
+    "src/identifier_retrieval.py": {
+      "bytes": 3294,
+      "sha256": "7ffdf79536015c6f77fae42451ee4467550bd693bde66a37cd4a9ab8d598ec7a"
+    },
+    "src/retrieval_comparison.py": {
+      "bytes": 4186,
+      "sha256": "bfd361dd002cc0ce877405ee5f57a9bd8e5a435cf2fd9c7a64388bbdbfe2100e"
+    },
+    "src/review_app.py": {
+      "bytes": 24592,
+      "sha256": "dfa6fb1bc55375813e707116d8dd153a51a0de454143da22003e33bbec9fd505"
+    },
+    "src/review_bundle.py": {
+      "bytes": 7817,
+      "sha256": "411d4b8435eb2d5fce06cac1a9a8a04ff7faa63500d51e9759be4e3ef210d918"
+    },
+    "src/review_provenance.py": {
+      "bytes": 4798,
+      "sha256": "f06d90874516fc4c3fc09ed4fb6e08a96072088037259ddcaa0d37932e70f0b5"
+    },
+    "src/semantic_retrieval.py": {
+      "bytes": 4409,
+      "sha256": "4cd9b620133d4039ac2ef8b0d876aecf468d6f934767c2a38292e27f2a6aab74"
+    },
+    "tests/test_claimtrail.py": {
+      "bytes": 1919,
+      "sha256": "985eee7ef03f4c89367971c790d2404970dca0ebdb3f2dde16dfcf29cfe08c54"
+    },
+    "tests/test_evaluate_reviews.py": {
+      "bytes": 3185,
+      "sha256": "4f149f1984521af158b441171b2a2d334184f444b19c817035f460a3ee6bbd7c"
+    },
+    "tests/test_review.py": {
+      "bytes": 5699,
+      "sha256": "220abca95d3598ed185b7835edc1a3017237718601ec1714398974068fd97683"
+    },
+    "tests/test_server.py": {
+      "bytes": 11917,
+      "sha256": "65434a4501cf32ce3eff8956a2b1f197327d120b96b84cb07019fe4fbb0316df"
+    },
+    "web/presentation.html": {
+      "bytes": 10513,
+      "sha256": "22961bef8dd469574bd7b6cd2d733d5abb49db549bf050204209673c3f57ae81"
+    },
+    "web/review.css": {
+      "bytes": 12860,
+      "sha256": "483a60820bedc5d038cfe6926f1eb2623b48fcb2e645d77ae8367e8aa11c79a3"
+    },
+    "web/review.html": {
+      "bytes": 6861,
+      "sha256": "12332bc394221d63eb7d1f18200fd75f1168084cb947a0daba5227de8f16f3e3"
+    },
+    "web/review.js": {
+      "bytes": 24056,
+      "sha256": "e2d81bc08d2c2c5f4209188c2f78ff3d06e32b5c5818ba6a3c5537768b359ba9"
+    }
+  },
+  "kind": "unpublished local repository candidate",
+  "notes": "Aggregate AI-assisted research summary included; publication review and dataset notification pending. CI is prepared, not executed on a hosted runner.",
+  "real_annotations_included": false,
+  "real_records_included": false
+}

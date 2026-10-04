@@ -1,0 +1,136 @@
+{
+  "dataset": "AI Digest / AI Village dataset (2026)",
+  "dataset_card": "https://huggingface.co/datasets/aidigestorg/ai-village",
+  "main_revision": "838b4150303ca8228e8edb432d8b8ccae353d258",
+  "parquet_revision": "d74780cb71b790c68cc8d949f63b06c922573e83",
+  "source_access": "Separately approved dataset access required; source files are not included.",
+  "research_terms": "analysis permitted; no model training/fine-tuning without written permission; no re-identification; cite AI Digest / AI Village and notify about publications",
+  "files": [
+    {
+      "local_path": "data/raw/CHANGELOG.md",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/CHANGELOG.md",
+      "bytes": 21965,
+      "sha256_local_copy": "65cac86a5ace6442879331ca7aadc7a46d4c77f7dd59979865cce708661e63d5",
+      "conversion": "byte copy"
+    },
+    {
+      "local_path": "data/raw/SCHEMA.md",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/SCHEMA.md",
+      "bytes": 18647,
+      "sha256_local_copy": "50f27bda7b862723b8d47d7f7652a6b1c0e0ce9d7c5db572252da4d886bd9903",
+      "conversion": "byte copy"
+    },
+    {
+      "local_path": "data/raw/agent_goals.jsonl",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/agent_goals.jsonl.gz",
+      "bytes": 13740,
+      "sha256_local_copy": "12c53451de037f338ca6500e643197bd85f918ad45ed0416fddb755cd79e81b6",
+      "conversion": "Safari expanded gzip during download"
+    },
+    {
+      "local_path": "data/raw/agents.jsonl",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/agents.jsonl.gz",
+      "bytes": 33056,
+      "sha256_local_copy": "de6f9a2ccf35df348162617426260346ec1119ec25fe663e9bd9230a7245ebf4",
+      "conversion": "Safari expanded gzip during download"
+    },
+    {
+      "local_path": "data/raw/chat_messages.jsonl",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/chat_messages.jsonl.gz",
+      "bytes": 150976967,
+      "sha256_local_copy": "f5d12bfdaa80fcf7d3bcf0cca18b46f13a41acbee2d95968462aaa7b0a9496ae",
+      "conversion": "Safari expanded gzip during download"
+    },
+    {
+      "local_path": "data/raw/chat_rooms.jsonl",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/chat_rooms.jsonl.gz",
+      "bytes": 6836,
+      "sha256_local_copy": "c418baf9c9fc780c5576486545e6865f1b1005612c76c16b83cdb5e55d08654a",
+      "conversion": "Safari expanded gzip during download"
+    },
+    {
+      "local_path": "data/raw/computer_use_sessions.jsonl",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/computer_use_sessions.jsonl.gz",
+      "bytes": 104831868,
+      "sha256_local_copy": "56ceef57fb53c35d83232992c907ba0a495779f3fbe1fb64e28a79f958e6f556",
+      "conversion": "Safari expanded gzip during download"
+    },
+    {
+      "local_path": "data/raw/turns-0000.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0000.parquet",
+      "bytes": 272919094,
+      "sha256_local_copy": "f26ff28d9cdf06c7ee804253e901b8167bbaa9a5cb2d55e18ae639d0d6c75e8e",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0001.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0001.parquet",
+      "bytes": 272397727,
+      "sha256_local_copy": "2ad4412e5007d37986bd343c490a9ce3c52721e95fbb9b93282a2ad908fd1706",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0002.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0002.parquet",
+      "bytes": 272476566,
+      "sha256_local_copy": "0ba2686b9107be549d832d4850be49d38d8999f019560458fe9b7c839227f5be",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0003.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0003.parquet",
+      "bytes": 273052992,
+      "sha256_local_copy": "350c0f8759d0e7112ee905f1348e21cb7cef0614975c8a39d079afa8c7f39635",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0004.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0004.parquet",
+      "bytes": 273313300,
+      "sha256_local_copy": "b0aa46b085b655776692e16c5e31318c254abedef2f755de28310e6b062e6e5f",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0005.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0005.parquet",
+      "bytes": 271983704,
+      "sha256_local_copy": "6529e9371d76b366a38aeb077ae662e406ed9886d9882d97bac18981816eaaed",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0006.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0006.parquet",
+      "bytes": 272221811,
+      "sha256_local_copy": "03b987b814dc43e4259c19b19f1fc9624d8561dbc79b189301d076c5fa516c25",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0007.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0007.parquet",
+      "bytes": 267137779,
+      "sha256_local_copy": "dac48d75a61a63c7a03c476d6633f4ffcec88f2036c54680c7b4b6062b06ccef",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0008.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0008.parquet",
+      "bytes": 267107140,
+      "sha256_local_copy": "69354054187475f7f46ea028301974712a5243fb84bdd3129f2f66989e6a2c20",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/turns-0009.parquet",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/d74780cb71b790c68cc8d949f63b06c922573e83/computer_use_turns/partial-train/0009.parquet",
+      "bytes": 235409295,
+      "sha256_local_copy": "8d2d53a3a380127fe774c2ef5461d5469e5485e9d7be8c4bc749ca2e8eeb0b07",
+      "conversion": "HF auto-converted Parquet; copied from authenticated Safari download"
+    },
+    {
+      "local_path": "data/raw/village_goals.jsonl",
+      "source_url": "https://huggingface.co/datasets/aidigestorg/ai-village/resolve/838b4150303ca8228e8edb432d8b8ccae353d258/village_goals.jsonl.gz",
+      "bytes": 15909,
+      "sha256_local_copy": "2c6c04347875d04e1f28e98497576746d13ee4a7dc3d41aea27247d77b18df51",
+      "conversion": "Safari expanded gzip during download"
+    }
+  ]
+}

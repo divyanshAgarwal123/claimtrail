@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClaimTrail · project rehearsal</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0a1422;color:#e9f0f8}*{box-sizing:border-box}body{margin:0}main{max-width:1140px;margin:auto;padding:40px 48px 110px}section{display:none;min-height:65vh}section.active{display:block}.eyebrow{color:#88d9c5;letter-spacing:.13em;text-transform:uppercase;font-size:13px}h1{font-size:clamp(40px,6vw,72px);line-height:1.05;margin:26px 0}h2{font-size:clamp(30px,4.5vw,49px);line-height:1.12;max-width:900px}p{font-size:21px;line-height:1.6;max-width:850px;color:#bdcad9}a{color:#88d9c5}small,.fine{font-size:14px;line-height:1.6;color:#b2bfce}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:32px 0}.card{border:1px solid #33455d;border-radius:16px;padding:22px;background:#132238}.card strong{display:block;font-size:31px;color:#fff}.card p{font-size:17px;margin-bottom:0}.timeline{border-left:3px solid #88d9c5;margin:25px 10px;padding-left:25px}.timeline p{font-size:20px}.badge{display:inline-block;padding:6px 12px;border-radius:20px;border:1px solid #53667b;font-size:14px}.amber{color:#ffd391}img{display:block;width:100%;max-height:420px;object-fit:contain;object-position:left top;border:1px solid #33455d;border-radius:12px;background:#fff}.split{display:grid;grid-template-columns:1fr 1fr;gap:28px}.split p{font-size:18px}nav{position:fixed;bottom:0;left:0;right:0;background:#0a1422f5;border-top:1px solid #33455d;padding:17px;display:flex;justify-content:center;align-items:center;gap:18px}button{font:inherit;color:#e9f0f8;background:#1d324e;border:1px solid #526a89;padding:10px 16px;border-radius:8px;cursor:pointer}button:disabled{opacity:.35;cursor:default}#progress{min-width:80px;text-align:center}#elapsed{font-variant-numeric:tabular-nums}#notes{display:none;background:#132238;padding:20px;border-radius:12px;margin-top:24px}#notes.visible{display:block}#notes p{font-size:17px}.title-accent{color:#88d9c5}code{font-size:16px;overflow-wrap:anywhere}@media(max-width:700px){main{padding:24px 22px 130px}.cards,.split{grid-template-columns:1fr}.card strong{font-size:25px}nav{gap:8px;flex-wrap:wrap;padding:10px}button{padding:8px 10px}p{font-size:18px}section{min-height:60vh}}@media print{nav,#notes{display:none!important}section{display:block;break-after:page;min-height:0}body{background:white;color:black}p,.fine,small{color:#333}.card{background:white}h1,h2,.card strong{color:black}main{padding:0}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">AI Swarm Dynamics · local presentation rehearsal · AI-assisted</div>
+<section class="active" data-notes="0:00–0:20. State the question. This is an investigation workbench for recorded claims, not an automatic truth detector. The screenshot later is synthetic; the research summaries are separate.">
+<h1>ClaimTrail<br><span class="title-accent">From “done” to evidence.</span></h1>
+<p>When one agent tells others that a task is complete, what do the recorded computer actions and artifact checks actually support?</p>
+<p class="fine">Traceable claims · exact actor and time context · uncertainty that stays visible</p>
+</section>
+<section data-notes="0:20–0:40. Explain the distinctions. Show the workbench screenshot as a synthetic example, not a real finding. Full records and before/after context are inspectable in the runnable app.">
+<h2>A commit, a deployment and a working feature need different evidence.</h2>
+<p>The workbench links assertions to records and separates earlier observations from later corroboration.</p>
+<img src="../docs/images/claimtrail-summary-desktop.png" alt="ClaimTrail workbench showing an explicitly synthetic deployment-delay example">
+<p class="fine">Screenshot: invented teaching fixture. Use the runnable app to open source records, filter actor/time and inspect saved citations.</p>
+</section>
+<section data-notes="0:40–1:05. Real development Case A: repository integration was supported, but latest captured live fetch lacked markers. Do not claim that live state was unchanged at the later message time. A local-source check just after the message does not prove prior live behavior.">
+<span class="badge">Real development case · AI-assisted reconstruction</span>
+<h2>Repository presence is supported.<br>Live state at claim time is unresolved.</h2>
+<div class="timeline"><p>Before the claim: repository integration is observed; the latest captured live fetch lacks the integration markers.</p><p>+0.278s: another agent checks local source.</p><p class="amber">Later local-source evidence does not establish prior live browser behavior.</p></div>
+<p class="fine">Offsets compare exported record timestamps. The gated source records stay in the authorized local workbench.</p>
+</section>
+<section data-notes="1:05–1:30. Real development Case B: the captured push was rejected and rebase succeeded. Remote presence is corroborated later, not proof of successful push before claim time. No screenshots were acquired. Avoid accusing the agent of lying.">
+<span class="badge">Real development case · AI-assisted reconstruction</span>
+<h2>Later success preserves an earlier timing question.</h2>
+<div class="timeline"><p>Before the claim: a push is rejected; a rebase succeeds.</p><p>+18.620s: another agent's remote pull corroborates eventual commit presence.</p><p>Later: repaired live URLs and HTTP 200 responses are observed.</p></div>
+<p class="amber">Successful push at claim time and complete browser functionality remain unverified.</p>
+<p class="fine">Missing actions in a partial export cannot prove that no retry occurred.</p>
+</section>
+<section data-notes="1:30–1:55. Describe scale and limits together. These counts are the assistant's selected-unit assessments, not accuracy or agent failure rates. MiniLM and BM25 disagree; neither is shown to be better. No training or external model API was used.">
+<h2>An exploratory review, with limits attached.</h2>
+<div class="cards"><div class="card"><strong>25 episodes</strong><p>64 selected claim units; 74 distinct non-chat source citations.</p></div><div class="card"><strong>32 unresolved</strong><p>29 supported; one internal arithmetic contradiction; two not completion claims.</p></div><div class="card"><strong>9 / 25</strong><p>BM25 and offline MiniLM agree on their top session. Ranking agreement, not accuracy.</p></div></div>
+<p>AI-assisted assessments. Independent human labels are absent. No screenshot inspection, calibrated truth score or causal transmission claim.</p>
+</section>
+<section data-notes="1:55–2:15. Show practical use and reliability. Source consistency is not semantic truth. The fresh demo requires no dependencies or gated data. The screenshot is synthetic; research inputs are deliberately excluded from the delivery candidate.">
+<h2>Inspectable now. Reproducible without data access.</h2>
+<div class="split"><div><h3>Reviewer workflow</h3><p>Inspect the assertion → compare actor and time → open source records → annotate narrow units → save and export.</p><p>Preserved provenance, checked source bindings and conflict-safe saves.</p></div><div><h3>Executed checks</h3><p>32 project tests<br>23 isolated-package tests<br>9 Chromium check groups</p><p class="fine">Tests cover software behavior and source consistency, not the truth of assessments.</p></div></div>
+<p><code>python3 -B src/review_app.py --demo --port 8766</code></p>
+<p class="fine">Python 3.9+ and a local browser. Invented fixtures only. No external API, model download or dataset needed for this demo.</p>
+</section>
+<section data-notes="2:15–2:30. End with the delivered capability and future measurement. Independent reviewer comparison with searchable logs remains an open question. Acknowledge AI Digest / AI Village. This is a rehearsal, not a published submission.">
+<h2>Make each conclusion inspectable.</h2>
+<p>ClaimTrail turns a completion message into an evidence trail with explicit source, actor, timing and unresolved scope.</p>
+<p class="fine">Next research step: independent reviewer evaluation against searchable logs. Measured workflow advantage and retrieval superiority remain open.</p>
+<p class="fine">Research source: AI Digest, “AI Village dataset,” 2026. Partial export; no training or fine-tuning. <a href="https://huggingface.co/datasets/aidigestorg/ai-village">Dataset card</a> · <a href="https://swarmchasing.com/">Event theme</a><br>Gated records, real annotations, models and credentials are excluded from the delivery candidate. Publication handling and organizer notification remain pending.</p>
+</section>
+<aside id="notes" aria-label="Presenter notes"><p id="note-text"></p></aside>
+</main>
+<nav aria-label="Presentation controls"><button id="previous">← Previous</button><span id="progress" aria-live="polite"></span><button id="next">Next →</button><button id="toggle-notes" aria-expanded="false">Notes</button><button id="timer">Start rehearsal</button><span id="elapsed">0:00 / 2:30</span></nav>
+<script>
+const slides=Array.from(document.querySelectorAll('section'));let index=0,start=null;
+function render(){slides.forEach((s,i)=>s.classList.toggle('active',i===index));document.querySelector('#progress').textContent=`${index+1} / ${slides.length}`;document.querySelector('#previous').disabled=index===0;document.querySelector('#next').disabled=index===slides.length-1;document.querySelector('#note-text').textContent=slides[index].dataset.notes;}
+function move(delta){index=Math.max(0,Math.min(slides.length-1,index+delta));render();window.scrollTo(0,0);}
+document.querySelector('#previous').onclick=()=>move(-1);document.querySelector('#next').onclick=()=>move(1);
+document.querySelector('#toggle-notes').onclick=()=>{const visible=document.querySelector('#notes').classList.toggle('visible');document.querySelector('#toggle-notes').setAttribute('aria-expanded',String(visible));};
+document.querySelector('#timer').onclick=()=>{start=Date.now();document.querySelector('#timer').textContent='Restart rehearsal';};
+setInterval(()=>{if(start===null)return;const seconds=Math.floor((Date.now()-start)/1000);document.querySelector('#elapsed').textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')} / 2:30`;},500);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')move(1);if(e.key==='ArrowLeft')move(-1);});render();
+</script></body></html>

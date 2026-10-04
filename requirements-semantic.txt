@@ -1,0 +1,9 @@
+# Optional, public inference-only libraries; install into ignored .deps with --no-deps.
+# PyTorch and NumPy must already be installed in the Python environment.
+transformers==4.46.3
+tokenizers==0.20.3
+safetensors==0.4.5
+huggingface-hub==0.26.5
+tqdm==4.67.1
+PyYAML==6.0.2
+regex==2024.11.6
