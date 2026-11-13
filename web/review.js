@@ -56,7 +56,7 @@ function updateNavigation() {
   }
   const complete = state.items.filter(x => x.total_units && x.labeled_units === x.total_units).length;
   $("#progress").textContent = `${complete}/${state.items.length} fully labeled`;
-  $("#queue-summary").textContent = `${shown} of ${state.items.length} shown` + (state.source.queue_seed ? ` · seed ${state.source.queue_seed}` : state.source.mode === "development_review" ? " · excluded from held-out evaluation" : " · invented examples");
+  $("#queue-summary").textContent = `${shown} of ${state.items.length} shown` + (state.source.queue_seed ? ` · seed ${state.source.queue_seed}` : state.source.mode === "goose_session" ? " · recorded Goose messages" : state.source.mode === "development_review" ? " · excluded from held-out evaluation" : " · invented examples");
   if (!shown) nav.append(node("p", "empty-queue", "No episodes match these filters."));
   const index = state.items.findIndex(x => x.claim_id === state.activeId);
   $("#previous-episode").disabled = index <= 0;
@@ -182,13 +182,14 @@ function evidenceCard(e) {
   pills.append(node("span", "pill" + (!e.same_agent ? " other" : ""), `${e.same_agent ? "Claimant" : "Other agent"} · ${e.actor_name || "Unknown"}`));
   if (e.screenshot_is_redacted) pills.append(node("span", "pill", "Screenshot redacted"));
   if (e.evidence_stage) pills.append(node("span", "pill", e.evidence_stage.replaceAll("_", " ")));
+  if (e.tool_observation) pills.append(node("span", "pill", e.tool_observation));
   if (Number.isFinite(e.record_offset_seconds)) pills.append(node("span", "pill", `Record time: ${e.record_offset_seconds >= 0 ? "+" : ""}${e.record_offset_seconds.toFixed(3)}s from claim`));
   card.append(pills);
   for (const [label, value, className] of [["Action", e.action_excerpt, ""], ["Tool output", e.output_excerpt, ""], ["Stderr / errors (inspect content)", e.error_excerpt, "stderr"]]) {
     if (!value || value === "{}") continue;
     card.append(node("div", "record-id", label), node("pre", className, value));
   }
-  const source = state.source.mode === "synthetic_demo" ? "invented teaching record" : `pinned Parquet revision ${state.source.parquet_revision.slice(0, 12)}`;
+  const source = state.source.mode === "goose_session" ? `Goose export SHA-256 ${state.source.main_revision.slice(0, 12)}` : state.source.mode === "synthetic_demo" ? "invented teaching record" : `pinned Parquet revision ${state.source.parquet_revision.slice(0, 12)}`;
   card.append(node("div", "record-id", `Session ${e.session_id} · ${e.source_shard} · ${source}`));
   const route = node("details", "route");
   route.append(node("summary", "record-id", "Why this turn was retrieved"),
@@ -215,7 +216,11 @@ async function showTurn(id) {
       if (value === null || value === undefined || value === "") continue;
       body.append(node("h3", "", name), node("pre", "", typeof value === "string" ? value : JSON.stringify(value, null, 2)));
     }
-    body.append(node("p", "record-id", `screenshot_is_redacted=${turn.screenshot_is_redacted}; has_redaction_been_overruled=${turn.has_redaction_been_overruled}`));
+    if (turn.goose) {
+      body.append(node("h3", "", "Original Goose tool events"), node("pre", "", JSON.stringify(turn.goose, null, 2)));
+    } else {
+      body.append(node("p", "record-id", `screenshot_is_redacted=${turn.screenshot_is_redacted}; has_redaction_been_overruled=${turn.has_redaction_been_overruled}`));
+    }
     if (!$("#record-dialog").open) $("#record-dialog").showModal();
   } catch (error) { alert(error.message); }
 }
@@ -263,9 +268,10 @@ function renderEpisode(episode, review, summary, integrity) {
   $("#episode-meta").textContent = `${episode.agent_name} · ${episode.created_at} UTC · message ${episode.claim_id}`;
   $("#original-message").textContent = episode.message;
   const demo = state.source.mode === "synthetic_demo";
+  const goose = state.source.mode === "goose_session";
   $("#message-description").textContent = demo ? "Invented agent message for demonstration" : "Exact agent chat text from the pinned export";
-  $("#provenance").textContent = demo ? "All messages and actions here are invented. Practice annotations are saved separately and never count as research findings." : `AI Digest / AI Village · main revision ${state.source.main_revision} · converted Parquet revision ${state.source.parquet_revision}. ${state.source.source_card}. This is a partial converted export, without screenshots; missing evidence does not establish failure.`;
-  $("#episode-guidance").textContent = episode.demo_lesson || (state.source.mode === "development_review" ? "These source records were selected during AI-assisted development. Check each assertion independently; this case cannot count toward held-out results." : "Inspect the recorded action and its result. Separate repository state, deployment state, and claims about what users could see.");
+  $("#provenance").textContent = goose ? `${state.source.source_description}. Conversation order resolves equal timestamps. A tool response can arrive successfully while its process exits nonzero. Missing records do not prove that an action never occurred outside this export.` : demo ? "All messages and actions here are invented. Practice annotations are saved separately and never count as research findings." : `AI Digest / AI Village · main revision ${state.source.main_revision} · converted Parquet revision ${state.source.parquet_revision}. ${state.source.source_card}. This is a partial converted export, without screenshots; missing evidence does not establish failure.`;
+  $("#episode-guidance").textContent = goose ? "Compare the assistant's exact statement with recorded tool results. Separate an attempted check, its process result, and any later verification. Imported messages are candidates for review, not automatic truth labels." : episode.demo_lesson || (state.source.mode === "development_review" ? "These source records were selected during AI-assisted development. Check each assertion independently; this case cannot count toward held-out results." : "Inspect the recorded action and its result. Separate repository state, deployment state, and claims about what users could see.");
   const before = episode.evidence.filter(e => e.phase === "before").length;
   const after = episode.evidence.length - before;
   const other = episode.evidence.filter(e => !e.same_agent).length;
@@ -355,10 +361,16 @@ async function init() {
     const demo = state.source.mode === "synthetic_demo";
     const development = state.source.mode === "development_review";
     const ai = state.source.mode === "ai_assisted_review";
-    $("#data-mode").textContent = demo ? "Synthetic demo · no dataset required" : development ? "Development cases · AI-assisted reconstruction" : ai ? "AI-assisted review · not independent validation" : "Research pilot · AI Village partial export";
+    const goose = state.source.mode === "goose_session";
+    $("#data-mode").textContent = goose ? "Goose session · recorded tool evidence" : demo ? "Synthetic demo · no dataset required" : development ? "Development cases · AI-assisted reconstruction" : ai ? "AI-assisted review · not independent validation" : "Research pilot · AI Village partial export";
     $("#data-mode").classList.toggle("demo", demo);
-    $("#queue-heading").textContent = demo ? "Practice cases" : development ? "Two development cases" : ai ? "25 AI-reviewed episodes" : "Frozen review queue";
-    $("#export-reviews").textContent = demo ? "Export practice labels" : development ? "Export case annotations" : ai ? "Export AI assessments" : "Export human labels";
+    $("#queue-heading").textContent = goose ? "Goose messages" : demo ? "Practice cases" : development ? "Two development cases" : ai ? "25 AI-reviewed episodes" : "Frozen review queue";
+    $("#export-reviews").textContent = goose ? "Export session annotations" : demo ? "Export practice labels" : development ? "Export case annotations" : ai ? "Export AI assessments" : "Export human labels";
+    if (goose) {
+      const route = node("option", "", "Goose tool records"); route.value = "goose session";
+      $("#lead-route").append(route);
+      $(".baseline").hidden = true;
+    }
     const citedRoute = node("option", "", "Saved citations"); citedRoute.value = "review citation";
     $("#lead-route").append(citedRoute);
     updateNavigation();

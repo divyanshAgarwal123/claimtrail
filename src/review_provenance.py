@@ -17,6 +17,18 @@ def source_hash(turn: dict) -> str:
     return hashlib.sha256(json.dumps(turn, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
 
+def record_phase(turn: dict, episode: dict) -> str:
+    """Use source order within one Goose export, including equal-second events."""
+    scope = episode.get("source_sequence_scope")
+    if scope and scope == turn.get("source_sequence_scope"):
+        sequences = [turn.get("source_sequence"), episode.get("source_sequence")]
+        if any(not isinstance(s, list) or len(s) != 2 or
+               any(type(i) is not int or i < 0 for i in s) for s in sequences):
+            raise ValueError("Invalid source event sequence")
+        return "before" if sequences[0] <= sequences[1] else "after"
+    return "before" if parse_time(turn["created_at"]) <= parse_time(episode["created_at"]) else "after"
+
+
 def citation_metadata(episode: dict, review: dict, turns: dict, owners: dict) -> dict:
     when = parse_time(episode["created_at"])
     checked = {}
@@ -35,7 +47,7 @@ def citation_metadata(episode: dict, review: dict, turns: dict, owners: dict) ->
             "source_record_sha256": source_hash(turn), "session_id": turn["session_id"],
             "actor_id": owners[turn["session_id"]], "created_at": turn["created_at"],
             "same_agent": owners[turn["session_id"]] == episode["agent_id"],
-            "phase": "before" if at <= when else "after",
+            "phase": record_phase(turn, episode),
             "record_offset_seconds": round((at - when).total_seconds(), 6),
         }
     return checked

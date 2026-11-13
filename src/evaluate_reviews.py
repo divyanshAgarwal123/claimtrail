@@ -58,7 +58,7 @@ def evaluate(queue: list[str], reviews: dict, claims: dict, turns: dict,
         review = reviews.get(cid)
         if not review:
             continue
-        if review.get("data_mode") in {"synthetic_demo", "development_review", "ai_assisted_review"}:
+        if review.get("data_mode") in {"synthetic_demo", "development_review", "ai_assisted_review", "goose_session"}:
             raise ValueError("synthetic practice, development, or AI-assisted annotations cannot be evaluated as independent human labels")
         if bundle_sha256 is not None and (review.get("data_mode") != "research" or review.get("bundle_sha256") != bundle_sha256):
             raise ValueError("review provenance does not match the current research bundle")

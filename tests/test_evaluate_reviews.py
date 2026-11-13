@@ -45,7 +45,7 @@ class EvaluateReviewsTests(unittest.TestCase):
         review["c1"]["data_mode"] = "synthetic_demo"
         with self.assertRaisesRegex(ValueError, "synthetic practice"):
             evaluate(["c1"], review, {}, {}, {}, {}, {})
-        for mode in ("development_review", "ai_assisted_review"):
+        for mode in ("development_review", "ai_assisted_review", "goose_session"):
             review["c1"]["data_mode"] = mode
             with self.assertRaisesRegex(ValueError, "independent human"):
                 evaluate(["c1"], review, {}, {}, {}, {}, {})
