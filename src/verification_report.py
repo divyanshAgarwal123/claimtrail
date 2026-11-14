@@ -2,11 +2,14 @@
 import hashlib
 import json
 from pathlib import Path
+from typing import Optional
 
 from scope_verification import RECEIPT, validate_record, verify
+from cli_paths import allowed_path
 
 
-def load_report(path: Path) -> tuple[dict, dict[str, Path]]:
+def load_report(path: Path, allowed_root: Optional[Path] = None) -> tuple[dict, dict[str, Path]]:
+    path = allowed_path(path, root=allowed_root)
     report = json.loads(path.read_text())
     if report.get("schema") != "claimtrail.verification-report.v1" or not isinstance(report.get("cases"), list) or not report["cases"]:
         raise ValueError("expected a nonempty ClaimTrail verification report")
@@ -51,7 +54,6 @@ def load_report(path: Path) -> tuple[dict, dict[str, Path]]:
 
 if __name__ == "__main__":
     import argparse
-    from cli_paths import allowed_path
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("report", type=Path)
     args = parser.parse_args()

@@ -48,7 +48,7 @@ class GooseImportTests(unittest.TestCase):
 
     def load(self, value=None):
         self.path.write_text(json.dumps(fixture() if value is None else value))
-        return import_session(self.path)
+        return import_session(self.path, allowed_root=self.path.parent)
 
     def test_success_envelope_does_not_hide_process_failure_or_later_verification(self):
         bundle, turns, sessions = self.load()
@@ -66,7 +66,7 @@ class GooseImportTests(unittest.TestCase):
         self.assertEqual(pins[turns[1]["id"]]["record_offset_seconds"], 0)
         self.assertNotIn("status", earlier["proposed_units"][0])
         self.assertNotIn("Not evidence", earlier["message"])
-        self.assertEqual(import_session(self.path), (bundle, turns, sessions))
+        self.assertEqual(import_session(self.path, allowed_root=self.path.parent), (bundle, turns, sessions))
 
     def test_missing_result_stays_unknown_and_orphan_response_has_no_invented_command(self):
         value = fixture()
@@ -92,7 +92,7 @@ class GooseImportTests(unittest.TestCase):
                 self.load(value)
         self.path.write_text('{"type":"message"}\n{"type":"complete"}')
         with self.assertRaisesRegex(ValueError, "not a streaming"):
-            import_session(self.path)
+            import_session(self.path, allowed_root=self.path.parent)
 
     def test_tool_error_nonfinal_result_and_hidden_assistant_text(self):
         value = fixture()
@@ -109,8 +109,8 @@ class GooseImportTests(unittest.TestCase):
         self.load()
         labels = self.path.with_name("reviews.json")
         with self.assertRaisesRegex(ValueError, "source export"):
-            ReviewServer(("127.0.0.1", 0), Handler, None, None, self.path, goose_session=self.path)
-        server = ReviewServer(("127.0.0.1", 0), Handler, None, None, labels, goose_session=self.path)
+            ReviewServer(("127.0.0.1", 0), Handler, None, None, self.path, goose_session=self.path, allowed_root=self.path.parent)
+        server = ReviewServer(("127.0.0.1", 0), Handler, None, None, labels, goose_session=self.path, allowed_root=self.path.parent)
         thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
 
         def request(path, payload=None):
@@ -141,7 +141,7 @@ class GooseImportTests(unittest.TestCase):
             self.assertEqual(exported[cid]["data_mode"], "goose_session")
             self.assertFalse(exported[cid]["assessment_policy"]["independent_human_validation"])
             self.assertEqual(exported[cid]["citations"][later]["phase"], "after")
-            with ReviewServer(("127.0.0.1", 0), Handler, None, None, labels, goose_session=self.path) as reopened:
+            with ReviewServer(("127.0.0.1", 0), Handler, None, None, labels, goose_session=self.path, allowed_root=self.path.parent) as reopened:
                 self.assertEqual(reopened.checked_reviews(), exported)
             original_labels = labels.read_bytes()
             value = fixture(); value["conversation"][1]["content"][0]["toolResult"]["value"]["structuredContent"]["stderr"] = "changed"

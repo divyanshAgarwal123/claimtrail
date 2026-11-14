@@ -12,6 +12,7 @@ from uuid import NAMESPACE_URL, uuid5
 from identifier_retrieval import parse_time
 from review_bundle import excerpt, proposed_units
 from review_provenance import record_phase, source_hash
+from cli_paths import allowed_path
 
 
 def _time(value) -> str:
@@ -68,7 +69,8 @@ def _result(block: dict) -> tuple[str, str, dict]:
     return output, error, info
 
 
-def import_session(path: Path) -> tuple[dict, list[dict], list[dict]]:
+def import_session(path: Path, allowed_root: Path | None = None) -> tuple[dict, list[dict], list[dict]]:
+    path = allowed_path(path, root=allowed_root)
     raw = path.read_bytes()
     try:
         session = json.loads(raw)

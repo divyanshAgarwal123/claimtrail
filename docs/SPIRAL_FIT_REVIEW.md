@@ -1,11 +1,9 @@
 # Spiral grant fit review
 
-Grant sources checked 14 November 2026. This assessment preceded the scope and
-freshness implementation. The [current results](VERIFICATION_RESULTS.md) and
-[updated proposal](SPIRAL_PROPOSAL.md) supersede its implementation/readiness
-snapshot below. MIT licensing, real-repository captures and an executable verifier
-have since been added. Independent user validation is still pending. This is
-project planning, not an application submission or a prediction of an award.
+Grant sources checked 14 November 2026; implementation assessment updated after
+the scope/freshness work. See the [results](VERIFICATION_RESULTS.md) and
+[proposal](SPIRAL_PROPOSAL.md). Independent user validation is still pending.
+This is project planning, not an application submission or prediction of an award.
 
 ## Decision
 
@@ -15,11 +13,10 @@ It does not yet justify treating a full-year grant as likely. Limit further
 unfunded preparation to a short, bounded sprint; do not plan college or finances
 around an award. The amount should remain open for discussion with Spiral.
 
-The strongest proposed direction is a reusable way to connect a coding agent's
-completion claims to checks on the relevant artifact revision, with an explicit
-distinction between a check that happened before the claim and a later rerun.
-The session viewer is the inspection interface. Revision binding and automatic
-checking are still proposed work, not implemented features.
+The implementation now binds a configured check to declared file content and a
+later observation, with explicit rejection of stale or mismatched evidence. The
+session viewer remains the inspection interface. Automatic semantic scope
+selection and dependency/environment attestation remain future work.
 
 ## Recent AI recipients
 
@@ -48,18 +45,19 @@ acceptance probability.
 
 ## Where ClaimTrail stands
 
-The local branch imports native Goose JSON, retains original tool events,
+The implementation imports native Goose JSON, retains original tool events,
 distinguishes process exit codes from successful response envelopes, separates
 before/after evidence, and lets a reviewer save source-pinned citations and
-uncertainty. It has 29 passing software tests. The UI was checked at desktop and
-390 px mobile widths, including filters, raw records and episode navigation.
+uncertainty. It has 47 passing software tests. The UI was checked at desktop and
+390 px mobile widths, including filters, raw records and navigation.
 
-One constructed local task produced a completion claim before its successful
-rerun was recorded; a second fresh run verified before claiming success. Both
-used the same small task and local model. This establishes integration and
-variation, not frequency, broad detection accuracy or a validated automatic
-verifier. Existing research interpretations are AI-assisted, not independent
-human labels. There is no secured external pilot or maintainer endorsement.
+The new evidence package contains 30 controlled cases on pinned More Itertools
+and ItsDangerous revisions, six actual Goose stages across two sessions, and
+native recipe fresh/stale trials. The earlier toy example also remains available.
+These establish contract behavior and integration, not natural failure frequency
+or a validated automatic semantic detector. Existing research interpretations
+are AI-assisted, not independent human labels. There is no secured external pilot
+or maintainer endorsement.
 
 Goose already has configured completion checks. In
 [issue 9708](https://github.com/aaif-goose/goose/issues/9708#issuecomment-5142623819),
@@ -75,18 +73,18 @@ pull request is neither proof of deployment nor evidence that the whole problem
 is solved. ClaimTrail's value must be established through the Goose workflow and
 measured review/checking benefits.
 
-The integration and this UI pass are local work. They must be made publicly
-reviewable before a proposal links to them. This checkout has no explicit project
-license file; an appropriate license and data/third-party boundaries should be
-resolved before presenting it as reusable open-source infrastructure.
+The implementation and evidence are publicly reviewable in
+[draft PR 1](https://github.com/divyanshAgarwal123/claimtrail/pull/1). They have not
+been merged to the default branch. MIT licensing and separate dataset/upstream
+notices are included.
 
 ## A bounded next step
 
-Before sending the full proposal, publish the integration, reproducible example
-and chosen license; collect feedback from at least one actual Goose user; and
-add a few ordinary repository sessions with both successful and unsuccessful
-checks. Record counterexamples and limits, not just a demonstration that succeeds.
-These are recommendations, not published Spiral requirements.
+The prototype and reproducible evidence are available for a focused proposal.
+The strongest remaining improvement is feedback from an actual Goose user and
+ordinary-use sessions with independently reviewed outcomes. Record counterexamples
+and limits, not just demonstrations that succeed. These are recommendations,
+not published Spiral requirements or secured commitments.
 
 At **20–25 hours per week**, a proposed 12-week first phase is about **240–300
 hours**, including documentation and feedback:

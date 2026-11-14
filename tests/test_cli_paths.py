@@ -8,9 +8,19 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from cli_paths import allowed_path, executable, model_name
+from goose_import import import_session
+from verification_report import load_report
 
 
 class CliPathsTests(unittest.TestCase):
+    def test_import_and_report_reject_unapproved_files_before_reading_them(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "approved"; root.mkdir()
+            outside = Path(d) / "private.json"; outside.write_text("not even JSON")
+            with patch.dict(os.environ, {"CLAIMTRAIL_ALLOWED_ROOT": str(root)}):
+                for reader in [import_session, load_report]:
+                    with self.subTest(reader=reader.__name__), self.assertRaisesRegex(ValueError, "host-approved"):
+                        reader(outside)
     def test_paths_cannot_escape_host_root_through_absolute_relative_or_symlink_paths(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d) / "approved"; root.mkdir()

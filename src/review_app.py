@@ -94,13 +94,18 @@ class ReviewServer(HTTPServer):
     def __init__(self, address, handler, bundle_path: Path | None, turns_path: Path | None,
                  labels_path: Path, sessions_path: Path | None = None, demo: bool = False,
                  development: bool = False, ai_review: bool = False,
-                 goose_session: Path | None = None, verification_report: Path | None = None):
+                 goose_session: Path | None = None, verification_report: Path | None = None,
+                 allowed_root: Path | None = None):
         if sum((demo, development, ai_review, goose_session is not None, verification_report is not None)) > 1:
             raise ValueError("choose one review mode")
+        if goose_session:
+            goose_session = allowed_path(goose_session, root=allowed_root)
+        if verification_report:
+            verification_report = allowed_path(verification_report, root=allowed_root)
         self.verification_report = verification_report
         if verification_report:
             from verification_report import load_report
-            self.verification, extra = load_report(verification_report)
+            self.verification, extra = load_report(verification_report, allowed_root=allowed_root)
             self.mode = "scope_verification"
             self.sources = SourceSnapshot({"verification_report": verification_report, **extra})
             self.sources.check()
@@ -116,7 +121,7 @@ class ReviewServer(HTTPServer):
                                      {"bundle": bundle_path, "turns": turns_path, "sessions": sessions_path})
         if goose_session:
             from goose_import import import_session
-            self.bundle, turn_rows, session_rows = import_session(goose_session)
+            self.bundle, turn_rows, session_rows = import_session(goose_session, allowed_root=allowed_root)
             if self.bundle["main_revision"] != self.sources.hashes["goose_export"]:
                 raise SourceIntegrityError("Goose export changed while importing; restart with a stable file.")
         elif demo:

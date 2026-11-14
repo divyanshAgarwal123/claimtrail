@@ -38,8 +38,9 @@ identifiers before passing CLI arguments to subprocesses.
 This guards against accidental agent-supplied paths/options. A process that can
 change its environment, execute arbitrary shell commands or rewrite this program
 can bypass it; OS/container isolation remains the host's responsibility. Library
-APIs accept paths from their trusted caller; the command-line entrypoints apply
-the host-root check.
+import/report APIs also check the host root. A trusted library caller can supply
+an explicit `allowed_root` for an isolated workspace; the command-line entrypoints
+do not accept a model-supplied root override.
 
 Choose a policy independently of the agent's completion prose. A policy contains
 a check ID, literal scope roots, argv, explicit exclusions, environment overrides
