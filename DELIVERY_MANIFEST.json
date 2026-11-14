@@ -10,8 +10,8 @@
       "sha256": "eab9881d24f7122a9abf19f8791467a02ba0b59ede0ffe60cd9d16441e14e154"
     },
     "README.md": {
-      "bytes": 4343,
-      "sha256": "bfb153ee75dbd097685dc2b7c3eefaa0fac64d63882c3e307de0c775e09baffb"
+      "bytes": 4824,
+      "sha256": "2e9c9b4bf9162b67b242821f82f19153829ef7a7a150debb607b9483d659bf6a"
     },
     "docs/GOOSE_INTEGRATION.md": {
       "bytes": 5203,
@@ -25,9 +25,17 @@
       "bytes": 3044,
       "sha256": "3dcb3966f125bec8b187caa8ff3e1fa8177a70454ca2ad37d50ee219578ecf51"
     },
+    "docs/SPIRAL_FIT_REVIEW.md": {
+      "bytes": 7535,
+      "sha256": "a4030ffe658abefe236b11ae5ea077268f3c54f01329e3edc75858a076ac18b3"
+    },
     "docs/SYNTHETIC_DEMO.md": {
       "bytes": 4116,
       "sha256": "de70caf708b23f015dac209567a7c80637b29f0074adf1eedb1ae7b88960bf8f"
+    },
+    "docs/images/claimtrail-goose-desktop.png": {
+      "bytes": 82121,
+      "sha256": "bfb0db8d1cc77e8fee0b41610c914547f673de0ec3d4041b8958b6e44d97efbe"
     },
     "docs/images/claimtrail-summary-desktop.png": {
       "bytes": 186492,
@@ -134,19 +142,19 @@
       "sha256": "22961bef8dd469574bd7b6cd2d733d5abb49db549bf050204209673c3f57ae81"
     },
     "web/review.css": {
-      "bytes": 12860,
-      "sha256": "483a60820bedc5d038cfe6926f1eb2623b48fcb2e645d77ae8367e8aa11c79a3"
+      "bytes": 23684,
+      "sha256": "b3e4acb04c3c91c8d2f2d1164f0b640a155582482c2fe4a40ac78afbd45699e1"
     },
     "web/review.html": {
-      "bytes": 6861,
-      "sha256": "12332bc394221d63eb7d1f18200fd75f1168084cb947a0daba5227de8f16f3e3"
+      "bytes": 7297,
+      "sha256": "185cbc17044b895426efff09085f9bbb51b6bf743f9ff14517c6d83a8cd62b27"
     },
     "web/review.js": {
-      "bytes": 25377,
-      "sha256": "f53e5e043297e04ebc32ac2be6624ebe7fa22f8ffe99fa88a217a330c7770bb9"
+      "bytes": 26603,
+      "sha256": "cf4128b0a7c014c2e93385dc88fa0c3014f4e0a684b9f20dd1514bad60132753"
     }
   },
-  "kind": "ClaimTrail Goose integration working-tree inventory",
+  "kind": "ClaimTrail Goose integration and review UI working-tree inventory",
   "notes": "Includes a redacted local Goose session from a constructed task. AI Village source records and annotations remain excluded. Hosted CI status is not asserted.",
   "real_annotations_included": false,
   "real_records_included": true,

@@ -19,6 +19,22 @@ function node(tag, className = "", text = "") {
   return e;
 }
 
+function claimExcerpt(text) {
+  return text.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/`([^`]+)`/g, "$1");
+}
+
+function actionExcerpt(text) {
+  try {
+    const action = JSON.parse(text), args = action.arguments;
+    if (typeof args?.command === "string") return args.command;
+    if (action.tool_name === "edit" && typeof args?.path === "string" &&
+        typeof args.before === "string" && typeof args.after === "string") {
+      return `${args.path.split(/[\\/]/).pop()}\n\nBefore: ${args.before}\nAfter:  ${args.after}`;
+    }
+  } catch (_) { /* Keep incomplete excerpts as recorded text. */ }
+  return text;
+}
+
 function markDirty() {
   state.editVersion++;
   state.dirty = true;
@@ -45,9 +61,11 @@ function updateNavigation() {
     shown++;
     const button = node("button", "episode-nav" + (item.claim_id === state.activeId ? " active" : ""));
     button.type = "button";
+    if (item.claim_id === state.activeId) button.setAttribute("aria-current", "true");
     const num = node("span", "episode-number", String(index + 1).padStart(2, "0"));
     const info = node("span", "episode-info");
-    info.append(node("strong", "", item.agent_name), node("small", "", item.created_at.slice(5, 16) + " UTC"));
+    info.append(node("strong", "", state.source.mode === "goose_session" ? claimExcerpt(item.preview) : item.agent_name),
+                node("small", "", item.created_at.slice(5, 16) + " UTC"));
     const status = item.total_units ? `${item.labeled_units}/${item.total_units} units labeled` : "Unreviewed";
     info.append(node("small", "tag" + (item.total_units ? "" : " empty"), status));
     button.append(num, info);
@@ -175,22 +193,26 @@ function citeTurn(id) {
 function evidenceCard(e) {
   const card = node("article", "evidence-card" + (e.phase === "after" ? " after" : "") + (!e.same_agent ? " other" : ""));
   const head = node("header");
-  head.append(node("time", "", e.created_at + " UTC"), node("span", "record-id", e.turn_id));
+  const when = node("time", "", e.created_at.slice(11, 19) + " UTC");
+  when.title = e.created_at + " UTC · " + e.turn_id;
+  head.append(node("strong", "evidence-observation", e.tool_observation || "Recorded action"), when);
   card.append(head);
   const pills = node("div", "pills");
-  pills.append(node("span", "pill" + (e.phase === "after" ? " after" : ""), e.phase === "after" ? "After claim" : "Before claim"));
+  pills.append(node("span", "pill" + (e.phase === "after" ? " after" : ""), e.phase === "after" ? "After claim" : "Before / at claim"));
   pills.append(node("span", "pill" + (!e.same_agent ? " other" : ""), `${e.same_agent ? "Claimant" : "Other agent"} · ${e.actor_name || "Unknown"}`));
   if (e.screenshot_is_redacted) pills.append(node("span", "pill", "Screenshot redacted"));
   if (e.evidence_stage) pills.append(node("span", "pill", e.evidence_stage.replaceAll("_", " ")));
-  if (e.tool_observation) pills.append(node("span", "pill", e.tool_observation));
-  if (Number.isFinite(e.record_offset_seconds)) pills.append(node("span", "pill", `Record time: ${e.record_offset_seconds >= 0 ? "+" : ""}${e.record_offset_seconds.toFixed(3)}s from claim`));
+  if (Number.isFinite(e.record_offset_seconds)) {
+    const seconds = e.record_offset_seconds;
+    pills.append(node("span", "pill offset", `${seconds >= 0 ? "+" : ""}${Number.isInteger(seconds) ? seconds : seconds.toFixed(3)}s from claim`));
+  }
   card.append(pills);
-  for (const [label, value, className] of [["Action", e.action_excerpt, ""], ["Tool output", e.output_excerpt, ""], ["Stderr / errors (inspect content)", e.error_excerpt, "stderr"]]) {
+  for (const [label, value, className] of [["Action", actionExcerpt(e.action_excerpt), ""], ["Tool output", e.output_excerpt, ""], ["Stderr / errors (inspect content)", e.error_excerpt, "stderr"]]) {
     if (!value || value === "{}") continue;
     card.append(node("div", "record-id", label), node("pre", className, value));
   }
   const source = state.source.mode === "goose_session" ? `Goose export SHA-256 ${state.source.main_revision.slice(0, 12)}` : state.source.mode === "synthetic_demo" ? "invented teaching record" : `pinned Parquet revision ${state.source.parquet_revision.slice(0, 12)}`;
-  card.append(node("div", "record-id", `Session ${e.session_id} · ${e.source_shard} · ${source}`));
+  card.append(node("div", "record-id", `${e.source_shard} · ${source}`));
   const route = node("details", "route");
   route.append(node("summary", "record-id", "Why this turn was retrieved"),
                node("div", "record-id", e.retrieved_by.join(", ")));
@@ -233,7 +255,9 @@ function renderIntegrity(integrity, policy) {
 
 function renderSummary(summary) {
   $("#summary-attribution").textContent = summary.attribution;
-  $("#summary-assertion").textContent = summary.assertion;
+  const excerpt = state.source.mode === "goose_session" && summary.attribution === "Unreviewed retrieval overview"
+    ? state.episode.proposed_units?.[0]?.text || summary.assertion : summary.assertion;
+  $("#summary-assertion").textContent = claimExcerpt(excerpt);
   $("#summary-note").textContent = summary.note;
   for (const group of ["before", "later"]) {
     const list = $("#summary-" + group); list.replaceChildren();
@@ -243,7 +267,8 @@ function renderSummary(summary) {
       const links = node("div", "summary-sources");
       for (const source of observation.sources) {
         const offset = source.record_offset_seconds;
-        const text = `${source.actor_name} · ${offset > 0 ? "+" : ""}${offset.toFixed(3)}s · ${source.phase === "after" ? "after claim" : "before / at claim"}`;
+        const seconds = Number.isInteger(offset) ? offset : offset.toFixed(3);
+        const text = `${source.actor_name} · ${offset > 0 ? "+" : ""}${seconds}s · View record ↗`;
         const link = node("button", "summary-source", text);
         link.type = "button"; link.dataset.turnId = source.turn_id;
         link.title = `Open source ${source.turn_id} · ${source.created_at} UTC`;
@@ -264,8 +289,9 @@ function renderEpisode(episode, review, summary, integrity) {
   $("#loading").hidden = true; $("#episode-view").hidden = false;
   const index = state.items.findIndex(x => x.claim_id === episode.claim_id);
   $("#position").textContent = `Episode ${index + 1} of ${state.items.length}`;
-  $("#episode-heading").textContent = episode.case_title || episode.agent_name + " · completion-claim candidate";
-  $("#episode-meta").textContent = `${episode.agent_name} · ${episode.created_at} UTC · message ${episode.claim_id}`;
+  $("#episode-heading").textContent = episode.case_title || (state.source.mode === "goose_session" ? "Completion evidence review" : episode.agent_name + " · completion-claim candidate");
+  $("#episode-meta").textContent = `${episode.agent_name} · ${episode.created_at.slice(0, 19)} UTC`;
+  $("#episode-meta").title = `Message ${episode.claim_id}`;
   $("#original-message").textContent = episode.message;
   const demo = state.source.mode === "synthetic_demo";
   const goose = state.source.mode === "goose_session";

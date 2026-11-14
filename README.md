@@ -26,6 +26,10 @@ Open **http://127.0.0.1:8767/**. This redacted example records a real Goose 1.59
 
 The [Goose integration guide](docs/GOOSE_INTEGRATION.md) covers importing your own JSON export and running a new local session. Import and review use the standard library and make no model calls. Creating a new session requires Goose and an already-installed local Ollama model. The recorded example is an integration case, not an accuracy benchmark.
 
+![ClaimTrail comparing the recorded evidence before a Goose claim with a successful check 118 seconds later](docs/images/claimtrail-goose-desktop.png)
+
+The screenshot shows the real, redacted local example with no reviewer labels assigned. Commands are readable excerpts; **Full record** preserves the original tool events. See the dated [Spiral grant fit review](docs/SPIRAL_FIT_REVIEW.md) for the funding comparison and remaining evidence gaps.
+
 ## Verify
 
 ```bash
@@ -34,7 +38,7 @@ python3 -B -m unittest discover -s tests -v
 
 The 29 included tests passed locally with Python site packages disabled. They use invented records, the redacted Goose example, temporary annotations and loopback ports. Tests establish software behavior and source consistency, not the semantic truth of assessments. Hosted CI for this integration has not run.
 
-`DELIVERY_MANIFEST.json` lists the included files, byte counts and SHA-256 hashes; it excludes itself. The redacted local Goose example and its provenance manifest are included. AI Village raw/derived dataset records, real annotations, research screenshots, model weights, credentials and council session logs remain excluded. An aggregate research overview and a synthetic UI screenshot are included.
+`DELIVERY_MANIFEST.json` lists the included files, byte counts and SHA-256 hashes; it excludes itself. The redacted local Goose example, its provenance manifest and a screenshot of its review are included. AI Village raw/derived dataset records, real annotations, research screenshots, model weights, credentials and council session logs remain excluded. An aggregate research overview and a synthetic UI screenshot are also included.
 
 ## Research code and boundaries
 
