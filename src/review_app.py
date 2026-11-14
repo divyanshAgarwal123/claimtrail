@@ -21,6 +21,7 @@ from identifier_retrieval import is_claim_echo, parse_time
 from review_bundle import excerpt, turn_text
 from review_provenance import (SourceIntegrityError, SourceSnapshot, citation_metadata,
                                default_review_policy, integrity_notice, record_phase, source_hash)
+from cli_paths import allowed_path
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -433,6 +434,10 @@ def main():
     modes.add_argument("--goose-session", type=Path, help="inspect a Goose session export produced with --format json")
     modes.add_argument("--verification-report", type=Path, help="replay captured scope/freshness evidence; never runs commands")
     args = parser.parse_args()
+    for name in ("bundle", "turns", "sessions", "labels", "goose_session", "verification_report"):
+        value = getattr(args, name)
+        if value is not None:
+            setattr(args, name, allowed_path(value))
     bundle = args.bundle or DERIVED / ("development_bundle.json" if args.development else "review_bundle.json")
     if not args.demo and not args.goose_session and not args.verification_report and not bundle.exists():
         parser.error("review bundle missing; run python3 src/review_bundle.py first")

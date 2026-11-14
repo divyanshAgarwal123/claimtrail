@@ -13,6 +13,7 @@ from pathlib import Path
 from run_scope_examples import REPOS, ROOT, configured, prepare
 sys.path.insert(0, str(ROOT / "src"))
 from scope_verification import at, now, observe, verify, write_json
+from cli_paths import allowed_path, executable, model_name
 
 
 def main():
@@ -22,11 +23,13 @@ def main():
     parser.add_argument("--python", type=Path, required=True)
     parser.add_argument("--model", default="qwen3:8b")
     args = parser.parse_args()
-    output = args.output.resolve(); output.mkdir(parents=True, exist_ok=False)
-    goose, python = str(args.goose.resolve()), str(args.python.absolute())
+    output = allowed_path(args.output); output.mkdir(parents=True, exist_ok=False)
+    goose, python = executable(args.goose, "goose"), executable(args.python, "python")
+    args.model = model_name(args.model)
     env = {**os.environ, "GOOSE_PATH_ROOT": str(output / "runtime"), "GOOSE_MODE": "auto",
            "GOOSE_DISABLE_SESSION_NAMING": "true", "GOOSE_TELEMETRY_ENABLED": "false",
-           "OLLAMA_HOST": "http://127.0.0.1:11434", "PYTHONDONTWRITEBYTECODE": "1"}
+           "OLLAMA_HOST": "http://127.0.0.1:11434", "PYTHONDONTWRITEBYTECODE": "1",
+           "CLAIMTRAIL_ALLOWED_ROOT": str(output)}
     report = {"schema": "claimtrail.verification-report.v1", "title": "Goose using scope and freshness receipts",
               "repositories": REPOS, "cases": [], "limits": [
                   "Real Goose 1.59.0 / local Qwen3:8b tool sessions; one session per repository.",

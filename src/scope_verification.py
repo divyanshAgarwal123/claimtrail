@@ -16,6 +16,8 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from uuid import uuid4
 
+from cli_paths import allowed_path
+
 
 RECEIPT = "claimtrail.check-receipt.v1"
 OBSERVATION = "claimtrail.scope-observation.v1"
@@ -273,6 +275,9 @@ def main():
     parser.add_argument("--observation", type=Path, help="Save a replayable verification observation")
     args = parser.parse_args()
     try:
+        args.repo, args.policy, args.receipt = (allowed_path(p) for p in [args.repo, args.policy, args.receipt])
+        if args.observation:
+            args.observation = allowed_path(args.observation)
         destinations = [args.receipt, *([args.observation] if args.observation else [])]
         if len({p.resolve() for p in [args.policy, *destinations]}) != 1 + len(destinations):
             raise ValueError("policy, receipt and observation must use separate files")

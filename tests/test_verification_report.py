@@ -2,6 +2,8 @@
 import hashlib
 import http.client
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import threading
@@ -89,6 +91,22 @@ class VerificationReportTests(unittest.TestCase):
         self.assertEqual(len(goose), 6)
         self.assertEqual(len(sources), 6)
         self.assertTrue(all(c.get("tool_observation") and c.get("goose_tool_call_id") for c in goose))
+
+    def test_packager_rejects_session_paths_outside_the_capture_directory(self):
+        goose = self.root / "goose"; goose.mkdir()
+        controlled = self.root / "controlled.json"
+        write_json(controlled, {"cases": [self.case] * 30})
+        bad = {"id": "more-itertools/fresh", "repository": "more-itertools",
+               "goose_claim": {"session_file": "../private.json"}}
+        write_json(goose / "report.json", {"cases": [bad] * 6})
+        write_json(self.root / "private.json", {"private_canary": "never package me"})
+        command = [sys.executable, "-B", str(Path(__file__).resolve().parents[1] / "scripts/package_verification.py"),
+                   "--controlled", str(controlled), "--goose", str(goose), "--recipe-trials", str(self.root / "unused.json"),
+                   "--output", str(self.root / "package")]
+        result = subprocess.run(command, env={**os.environ, "CLAIMTRAIL_ALLOWED_ROOT": str(self.root)}, capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("scope paths must stay inside", result.stderr)
+        self.assertFalse(any((self.root / "package").rglob("*.json")))
 
 
 if __name__ == "__main__": unittest.main()

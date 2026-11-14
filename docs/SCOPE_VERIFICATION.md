@@ -27,6 +27,20 @@ means it did not verify, and **2** means invalid input or capture failure. Keep
 the policy, receipt and observation in separate files, and put capture outputs
 outside the declared source scope.
 
+CLI paths must resolve inside the host-approved root, which defaults to the
+current working directory. A host running tools from a nested repository can set
+`CLAIMTRAIL_ALLOWED_ROOT` in the tool's environment to an approved common parent
+for the repository, policy and capture output. Absolute paths, `..` and symlinks
+cannot escape that configured boundary. The reproduction runners propagate the
+boundary when invoking Goose. They also validate executable names and model
+identifiers before passing CLI arguments to subprocesses.
+
+This guards against accidental agent-supplied paths/options. A process that can
+change its environment, execute arbitrary shell commands or rewrite this program
+can bypass it; OS/container isolation remains the host's responsibility. Library
+APIs accept paths from their trusted caller; the command-line entrypoints apply
+the host-root check.
+
 Choose a policy independently of the agent's completion prose. A policy contains
 a check ID, literal scope roots, argv, explicit exclusions, environment overrides
 and timeout. Relative argv paths and environment values are interpreted from the

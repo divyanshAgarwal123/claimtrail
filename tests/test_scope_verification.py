@@ -146,14 +146,15 @@ class ScopeVerificationTests(unittest.TestCase):
         command = [sys.executable, "-B", str(Path(__file__).resolve().parents[1] / "src/scope_verification.py"),
                    "run", "--repo", str(self.root), "--policy", str(spec_path), "--receipt", str(receipt),
                    "--observation", str(observation)]
-        result = subprocess.run(command, capture_output=True, text=True)
+        env = {**os.environ, "CLAIMTRAIL_ALLOWED_ROOT": str(directory)}
+        result = subprocess.run(command, capture_output=True, text=True, env=env)
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertEqual(verify(self.spec, json.loads(receipt.read_text()), json.loads(observation.read_text()))["status"], "verified")
         (self.root / "src/a.py").write_text("changed\n")
         command[3] = "verify"
-        self.assertEqual(subprocess.run(command, capture_output=True).returncode, 1)
+        self.assertEqual(subprocess.run(command, capture_output=True, env=env).returncode, 1)
         command[command.index("--receipt") + 1] = str(spec_path)
-        self.assertEqual(subprocess.run(command, capture_output=True).returncode, 2)
+        self.assertEqual(subprocess.run(command, capture_output=True, env=env).returncode, 2)
         self.assertEqual(json.loads(spec_path.read_text()), self.spec)
 
 

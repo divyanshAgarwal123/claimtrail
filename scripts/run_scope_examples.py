@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -12,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from scope_verification import observe, policy, run_check, seal, verify, write_json
+from cli_paths import allowed_path, executable
 
 REPOS = [
     {"id": "more-itertools", "url": "https://github.com/more-itertools/more-itertools.git",
@@ -146,6 +148,8 @@ def main():
     parser.add_argument("--repositories", type=Path, default=ROOT / "data/real-repos")
     parser.add_argument("--python", default=sys.executable, help="Python with pytest and freezegun installed")
     args = parser.parse_args()
+    args.output, args.repositories = allowed_path(args.output), allowed_path(args.repositories)
+    args.python = executable(args.python, "python")
     args.output.mkdir(parents=True, exist_ok=False)
     report = {"schema": "claimtrail.verification-report.v1", "created_at": datetime.now(timezone.utc).isoformat(),
               "title": "Scope and freshness on real repositories", "python": subprocess.check_output([args.python, "--version"], text=True).strip(),

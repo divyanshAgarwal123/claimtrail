@@ -66,4 +66,4 @@ async function start() {
     open(report.cases.some(c=>c.id===requested)?requested:report.cases.find(c=>c.result.status==="stale")?.id||report.cases[0].id);
   } catch(error) { $("#loading").textContent=error.message; }
 }
-start();
+void start();

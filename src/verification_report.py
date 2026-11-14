@@ -51,10 +51,11 @@ def load_report(path: Path) -> tuple[dict, dict[str, Path]]:
 
 if __name__ == "__main__":
     import argparse
+    from cli_paths import allowed_path
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("report", type=Path)
     args = parser.parse_args()
-    report, _ = load_report(args.report)
+    report, _ = load_report(allowed_path(args.report))
     print(json.dumps({"cases": report["replayed_cases"], "matching": report["matching_cases"],
                       "note": "Deterministic contract replay, not an independent accuracy benchmark."}))
     raise SystemExit(0 if report["replayed_cases"] == report["matching_cases"] else 1)

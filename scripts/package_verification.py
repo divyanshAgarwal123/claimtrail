@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from scope_verification import write_json
 from verification_report import load_report
+from cli_paths import allowed_path
+from scope_verification import relative
 
 
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -21,6 +23,8 @@ def main():
     parser.add_argument("--recipe-trials", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    args.controlled, args.goose, args.recipe_trials, args.output = (
+        allowed_path(p) for p in [args.controlled, args.goose, args.recipe_trials, args.output])
     args.output.mkdir(parents=True, exist_ok=False)
     controlled = json.loads(args.controlled.read_text())
     goose = json.loads((args.goose / "report.json").read_text())
@@ -34,8 +38,12 @@ def main():
                   "limits": "Local capture and transformation provenance, not independent authenticity attestation."}
     sessions = args.output / "sessions"; sessions.mkdir()
     for case in goose["cases"]:
+        relative(case["id"])
+        if case["repository"] not in {"more-itertools", "itsdangerous"}:
+            raise ValueError("unknown recorded repository")
         claim = case["goose_claim"]
-        original_path = args.goose / claim["session_file"]
+        relative(claim["session_file"])
+        original_path = allowed_path(args.goose / claim["session_file"], root=args.goose)
         original = json.loads(original_path.read_text())
         workspace = str((args.goose / "repos" / case["repository"]).resolve())
         def redact(value):

@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from scope_verification import policy, run_check, write_json
+from cli_paths import allowed_path, executable
 
 
 def main():
@@ -20,6 +21,8 @@ def main():
     p.add_argument("--source", required=True, help="Declared source file for a reversible, benign edit")
     p.add_argument("--output", type=Path, required=True)
     args = p.parse_args()
+    args.output, args.repo, args.policy = (allowed_path(p) for p in [args.output, args.repo, args.policy])
+    args.goose = Path(executable(args.goose, "goose"))
     args.output.mkdir(parents=True, exist_ok=False)
     out, repo = args.output.resolve(), args.repo.resolve()
     spec = policy(json.loads(args.policy.read_text()))
@@ -37,7 +40,8 @@ def main():
               "retry": {"max_retries": 1, "timeout_seconds": 30, "checks": [{"type": "shell", "command": shlex.join(gate)}]}}
     write_json(out / "recipe.json", recipe)
     env = {**os.environ, "GOOSE_PATH_ROOT": str(out / "runtime"), "GOOSE_TELEMETRY_ENABLED": "false", "GOOSE_DISABLE_SESSION_NAMING": "true",
-           "GOOSE_MODE": "auto", "OLLAMA_HOST": "http://127.0.0.1:11434"}
+           "GOOSE_MODE": "auto", "OLLAMA_HOST": "http://127.0.0.1:11434",
+           "CLAIMTRAIL_ALLOWED_ROOT": os.environ.get("CLAIMTRAIL_ALLOWED_ROOT", str(Path.cwd()))}
     original = source.read_bytes()
     trials = []
     try:
