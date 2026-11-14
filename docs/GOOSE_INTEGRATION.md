@@ -95,8 +95,10 @@ selects a new output directory; an existing directory is never overwritten.
 - Assistant thinking, prompts, and hidden assistant text are excluded from claim
   candidates. Original tool events remain inspectable.
 - The existing 24-hour-before / two-hour-after review window still applies.
-- Cross-session linking, filesystem freshness checks, and automatic completion
-  gating are outside this first integration.
+- Plain session import does not establish filesystem freshness. The separate
+  [scope verifier](SCOPE_VERIFICATION.md) needs a captured receipt and observation
+  and can run inside an existing recipe check. Cross-session linking remains
+  outside this importer.
 
 ```bash
 python3 -S -B -m unittest discover -s tests -v

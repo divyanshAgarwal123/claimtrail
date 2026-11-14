@@ -46,9 +46,10 @@ to file content, rejects stale or mismatched receipts, and supports offline
 review. Scripted captures already join receipts to Goose session and tool IDs;
 native recipe trials accepted a fresh receipt and rejected a stale one.
 
-The [published results](VERIFICATION_RESULTS.md) include 30 controlled cases on
-pinned More Itertools and ItsDangerous revisions, plus six actual Goose stages
-across two sessions. Captured full-suite runs recorded 936 tests with five skipped
+The [published results](VERIFICATION_RESULTS.md#evidence-units-and-claims) include
+15 controlled scenarios exercised in pinned More Itertools and ItsDangerous
+revisions (30 cases), plus six guided Goose stages across two sessions.
+Captured full-suite runs recorded 936 tests with five skipped
 and 297 passed, respectively. ClaimTrail has 47 passing software tests and CI on
 the merged implementation. The [demo](../README.md#review-the-real-repository-evidence)
 can replay these records without a model or API.
@@ -82,7 +83,8 @@ one regular Goose user is a recruitment target; nobody is currently recruited.
 The [review protocol](REVIEWER_GUIDE.md) specifies the tasks and reporting fields.
 
 - **Technical audit:** one reviewer assesses 12 frozen captures, six ordinary
-  and six controlled, from raw records before seeing ClaimTrail's outcome labels.
+  and six controlled, from raw records before opening ClaimTrail's summary.
+  Original tool statuses stay visible; this is not a fully blinded audit.
   Record agreement with the mechanical contract and judgments about policy
   sufficiency separately; the latter can remain unresolved.
 - **User pilots:** each of two users attempts setup from the docs without live
@@ -92,6 +94,12 @@ The [review protocol](REVIEWER_GUIDE.md) specifies the tasks and reporting field
 - **Fair comparison:** the baseline includes Goose's configured checks,
   transcript and artifacts, with fresh reruns when normally required. ClaimTrail
   adds its joined receipt/scope view. An old exit code alone is not the baseline.
+
+The current guided sessions already contain ClaimTrail tool output, so their
+offline comparison measures presentation only. New ordinary tasks are needed
+for the live baseline. A [bounded developer pilot](GOOSE_DEVELOPER_VALIDATION.md)
+specifies how to collect an own-change trial and voluntary repeat without
+treating positive feedback as observed adoption.
 
 Measure setup completion/time, policy configuration effort, hands-on review time,
 check execution time, incorrect acceptances/rejections against the frozen

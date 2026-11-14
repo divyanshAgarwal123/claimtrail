@@ -1,0 +1,64 @@
+{
+  "kind": "ClaimTrail developer trial template - not an observation",
+  "status": "not_started",
+  "participant": {
+    "pseudonymous_id": null,
+    "independent_from_implementation": null,
+    "prior_goose_coding_use": null,
+    "permission_to_publish_redacted_record": null,
+    "recent_review_problem": null
+  },
+  "task": {
+    "id": null,
+    "origin": null,
+    "repository_url": null,
+    "starting_revision": null,
+    "final_revision_or_patch_sha256": null,
+    "condition": null,
+    "condition_order": null,
+    "comparison_type": null,
+    "goose_version": null,
+    "claimtrail_commit": null,
+    "model_and_provider": null,
+    "runtime_and_platform": null
+  },
+  "evidence": {
+    "baseline_check_and_review_method": null,
+    "policy_file_and_sha256": null,
+    "scope_rationale": null,
+    "receipt_file_and_sha256": null,
+    "observation_file_and_sha256": null,
+    "observation_time": null,
+    "goose_export_file_and_sha256": null,
+    "completion_message_id_and_time": null,
+    "missing_artifacts": null,
+    "raw_verifier_status_visible_in_baseline": null
+  },
+  "effort": {
+    "setup_seconds": null,
+    "policy_configuration_seconds": null,
+    "hands_on_review_seconds": null,
+    "check_execution_seconds": null,
+    "check_execution_count": null,
+    "assistance_and_time": null,
+    "setup_completed_without_coaching": null
+  },
+  "outcome": {
+    "verifier_result": null,
+    "participant_evidence_decision": null,
+    "reference_contract_decision": null,
+    "reference_reviewed_by": null,
+    "policy_sufficiency_judgment": null,
+    "disagreements_and_unresolved_questions": null,
+    "benefit_no_difference_or_added_work": null,
+    "specific_reason_or_example": null,
+    "protocol_deviations": null
+  },
+  "repeat_use": {
+    "offered": null,
+    "chosen": null,
+    "observed_completed_without_coaching": null,
+    "different_task_record_or_artifact": null,
+    "reason": null
+  }
+}
