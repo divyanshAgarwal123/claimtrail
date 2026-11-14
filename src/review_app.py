@@ -20,7 +20,8 @@ from case_summary import case_summary
 from identifier_retrieval import is_claim_echo, parse_time
 from review_bundle import excerpt, turn_text
 from review_provenance import (SourceIntegrityError, SourceSnapshot, citation_metadata,
-                               default_review_policy, integrity_notice, source_hash)
+                               default_review_policy, integrity_notice, record_phase, source_hash)
+from cli_paths import allowed_path
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -92,16 +93,38 @@ def save_reviews(reviews: dict, path: Path = LABELS) -> None:
 class ReviewServer(HTTPServer):
     def __init__(self, address, handler, bundle_path: Path | None, turns_path: Path | None,
                  labels_path: Path, sessions_path: Path | None = None, demo: bool = False,
-                 development: bool = False, ai_review: bool = False):
-        if sum((demo, development, ai_review)) > 1:
+                 development: bool = False, ai_review: bool = False,
+                 goose_session: Path | None = None, verification_report: Path | None = None,
+                 allowed_root: Path | None = None):
+        if sum((demo, development, ai_review, goose_session is not None, verification_report is not None)) > 1:
             raise ValueError("choose one review mode")
-        self.mode = "synthetic_demo" if demo else "development_review" if development else "ai_assisted_review" if ai_review else "research"
+        if goose_session:
+            goose_session = allowed_path(goose_session, root=allowed_root)
+        if verification_report:
+            verification_report = allowed_path(verification_report, root=allowed_root)
+        self.verification_report = verification_report
+        if verification_report:
+            from verification_report import load_report
+            self.verification, extra = load_report(verification_report, allowed_root=allowed_root)
+            self.mode = "scope_verification"
+            self.sources = SourceSnapshot({"verification_report": verification_report, **extra})
+            self.sources.check()
+            super().__init__(address, handler)
+            return
+        self.mode = "goose_session" if goose_session else "synthetic_demo" if demo else "development_review" if development else "ai_assisted_review" if ai_review else "research"
         if self.mode != "research" and labels_path.resolve() == LABELS.resolve():
-            raise ValueError("non-human annotations must not overwrite human reviews")
+            raise ValueError("non-research annotations must not overwrite research reviews")
+        if goose_session and labels_path.resolve() == goose_session.resolve():
+            raise ValueError("Goose annotations must not overwrite the source export")
         sessions_path = sessions_path or ROOT / "data/raw/computer_use_sessions.jsonl"
-        self.sources = SourceSnapshot({} if demo else {"bundle": bundle_path, "turns": turns_path,
-                                                       "sessions": sessions_path})
-        if demo:
+        self.sources = SourceSnapshot({"goose_export": goose_session} if goose_session else {} if demo else
+                                     {"bundle": bundle_path, "turns": turns_path, "sessions": sessions_path})
+        if goose_session:
+            from goose_import import import_session
+            self.bundle, turn_rows, session_rows = import_session(goose_session, allowed_root=allowed_root)
+            if self.bundle["main_revision"] != self.sources.hashes["goose_export"]:
+                raise SourceIntegrityError("Goose export changed while importing; restart with a stable file.")
+        elif demo:
             from demo_data import demo_records
             self.bundle, turn_rows, session_rows = demo_records()
         else:
@@ -126,7 +149,7 @@ class ReviewServer(HTTPServer):
                     raise ValueError("evidence lead does not match its source turn")
                 if lead["same_agent"] != (self.owner[turn["session_id"]] == episode["agent_id"]):
                     raise ValueError("evidence actor attribution mismatch")
-                if lead["phase"] != ("before" if parse_time(turn["created_at"]) <= parse_time(episode["created_at"]) else "after"):
+                if lead["phase"] != record_phase(turn, episode):
                     raise ValueError("evidence timing mismatch")
                 if "source_record_sha256" in lead and lead["source_record_sha256"] != source_hash(turn):
                     raise SourceIntegrityError("Evidence anchor source content changed: " + turn["id"])
@@ -182,7 +205,7 @@ class ReviewServer(HTTPServer):
             offset = (parse_time(turn["created_at"]) - when).total_seconds()
             if tid not in leads:
                 leads[tid] = {"turn_id": tid, "session_id": turn["session_id"],
-                              "created_at": turn["created_at"], "phase": "before" if offset <= 0 else "after",
+                              "created_at": turn["created_at"], "phase": record_phase(turn, episode),
                               "same_agent": self.owner[turn["session_id"]] == episode["agent_id"],
                               "retrieved_by": [], "source_shard": turn["source_shard"],
                               "screenshot_is_redacted": turn.get("screenshot_is_redacted"),
@@ -192,7 +215,8 @@ class ReviewServer(HTTPServer):
             leads[tid]["retrieved_by"].append("review citation")
         for lead in leads.values():
             lead["record_offset_seconds"] = round((parse_time(lead["created_at"]) - when).total_seconds(), 6)
-        return [self.named_lead(e) for e in sorted(leads.values(), key=lambda e: (parse_time(e["created_at"]), e["turn_id"]))]
+        return [self.named_lead(e) for e in sorted(leads.values(), key=lambda e: (
+            parse_time(e["created_at"]), self.turns[e["turn_id"]].get("source_sequence", [-1, -1]), e["turn_id"]))]
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -239,6 +263,15 @@ class Handler(BaseHTTPRequestHandler):
     def _get(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        if self.server.verification_report:
+            if path == "/api/verification":
+                return self._json(self.server.verification)
+            files = {"/": ("verification.html", "text/html"), "/verification.js": ("verification.js", "text/javascript"),
+                     "/review.css": ("review.css", "text/css"), "/verification.css": ("verification.css", "text/css")}
+            if path in files:
+                name, mime = files[path]
+                return self._send((WEB / name).read_bytes(), mime)
+            return self._error("not found", 404)
         if path in {"/", "/review.js", "/review.css"}:
             name = {"/": "review.html", "/review.js": "review.js", "/review.css": "review.css"}[path]
             mime = "text/html" if name.endswith(".html") else "text/javascript" if name.endswith(".js") else "text/css"
@@ -256,6 +289,7 @@ class Handler(BaseHTTPRequestHandler):
                                "parquet_revision": self.server.bundle["parquet_revision"],
                                "source_card": self.server.bundle["source_card"],
                                "mode": self.server.mode, "queue_seed": self.server.bundle.get("queue_seed"),
+                               "source_description": self.server.bundle.get("source_description"),
                                "bundle_sha256": self.server.bundle_sha256})
         if path.startswith("/api/episode/"):
             cid = path.removeprefix("/api/episode/")
@@ -292,7 +326,7 @@ class Handler(BaseHTTPRequestHandler):
                     continue
                 if scope == "claimant" and self.server.owner.get(turn["session_id"]) != episode["agent_id"]:
                     continue
-                if phase == "before" and t > when or phase == "after" and t <= when:
+                if phase != "both" and record_phase(turn, episode) != phase:
                     continue
                 if not turn_text(turn).strip("{}\n "):
                     continue
@@ -305,19 +339,21 @@ class Handler(BaseHTTPRequestHandler):
                     break
                 found.append({"turn_id": turn["id"], "session_id": turn["session_id"],
                               "created_at": turn["created_at"],
-                              "phase": "before" if parse_time(turn["created_at"]) <= when else "after",
+                              "phase": record_phase(turn, episode),
                               "same_agent": self.server.owner.get(turn["session_id"]) == episode["agent_id"],
                               "retrieved_by": ["search lexical turn"],
                               "action_excerpt": excerpt(json.dumps(turn.get("agent_action") or {}, ensure_ascii=False), query, 600),
                               "output_excerpt": excerpt(turn.get("output") or "", query),
                               "error_excerpt": excerpt(turn.get("error") or "", query, 650),
                               "screenshot_is_redacted": turn.get("screenshot_is_redacted"),
+                              "tool_observation": turn.get("goose", {}).get("tool_observation"),
                               "source_shard": turn["source_shard"], "search_score": score})
             return self._json({"results": [self.server.named_lead(e) for e in found], "candidate_turns": len(pool),
                                "note": "Search returns evidence candidates, not support labels."})
         if path == "/api/export":
             name = {"synthetic_demo": "claimtrail-practice-labels.json", "development_review": "claimtrail-development-labels.json",
                     "ai_assisted_review": "claimtrail-ai-assessments.json",
+                    "goose_session": "claimtrail-goose-reviews.json",
                     "research": "claimtrail-human-reviews.json"}[self.server.mode]
             return self._json(self.server.checked_reviews(), extra_headers={
                 "Content-Disposition": f'attachment; filename="{name}"'})
@@ -326,6 +362,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self._safe_host():
             return self._error("local host only", 403)
+        if self.server.verification_report:
+            return self._error("verification reports are read-only", 405)
         origin = self.headers.get("Origin")
         if origin not in {f"http://127.0.0.1:{self.server.server_port}",
                           f"http://localhost:{self.server.server_port}"}:
@@ -372,6 +410,8 @@ class Handler(BaseHTTPRequestHandler):
         elif self.server.mode == "ai_assisted_review":
             review["source"] = "edited in AI-assisted assessment workspace; not independent human validation"
             review["assessment_origin"] = (previous or {}).get("assessment_origin", "AI-assisted; not independent human validation")
+        elif self.server.mode == "goose_session":
+            review["source"] = "local annotation of a Goose session; not independent benchmark validation"
         # Check the disk snapshot again just before replacing the labels file.
         try:
             summary = self.server.summary(self.server.episodes[cid], review)
@@ -396,17 +436,26 @@ def main():
     modes.add_argument("--demo", action="store_true", help="use invented examples; requires no dataset or ML packages")
     modes.add_argument("--development", action="store_true", help="inspect the two source-checked development cases; separate from the held-out queue")
     modes.add_argument("--ai-review", action="store_true", help="inspect AI-assisted assessments; never treated as human validation")
+    modes.add_argument("--goose-session", type=Path, help="inspect a Goose session export produced with --format json")
+    modes.add_argument("--verification-report", type=Path, help="replay captured scope/freshness evidence; never runs commands")
     args = parser.parse_args()
+    for name in ("bundle", "turns", "sessions", "labels", "goose_session", "verification_report"):
+        value = getattr(args, name)
+        if value is not None:
+            setattr(args, name, allowed_path(value))
     bundle = args.bundle or DERIVED / ("development_bundle.json" if args.development else "review_bundle.json")
-    if not args.demo and not bundle.exists():
+    if not args.demo and not args.goose_session and not args.verification_report and not bundle.exists():
         parser.error("review bundle missing; run python3 src/review_bundle.py first")
-    labels = args.labels or (ROOT / "data/demo/reviews.json" if args.demo else DERIVED / "development_reviews.json" if args.development else DERIVED / "ai_reviews.json" if args.ai_review else LABELS)
-    if (args.demo or args.development or args.ai_review) and labels.resolve() == LABELS.resolve():
-        parser.error("demo/development/AI annotations must not overwrite human reviews")
+    labels = args.labels or (args.goose_session.with_name(args.goose_session.stem + ".claimtrail-reviews.json") if args.goose_session else ROOT / "data/demo/reviews.json" if args.demo else DERIVED / "development_reviews.json" if args.development else DERIVED / "ai_reviews.json" if args.ai_review else LABELS)
+    if (args.demo or args.development or args.ai_review or args.goose_session) and labels.resolve() == LABELS.resolve():
+        parser.error("demo/development/AI/Goose annotations must not overwrite research reviews")
+    if args.goose_session and labels.resolve() == args.goose_session.resolve():
+        parser.error("Goose annotations must not overwrite the source export")
     server = ReviewServer(("127.0.0.1", args.port), Handler, bundle, args.turns, labels,
-                          args.sessions, args.demo, args.development, args.ai_review)
+                          args.sessions, args.demo, args.development, args.ai_review, args.goose_session, args.verification_report)
     print(f"ClaimTrail review: http://127.0.0.1:{server.server_port}/", flush=True)
-    print(f"Mode: {server.mode}; labels: {labels} (created only after Save Review)", flush=True)
+    print("Read-only verification report; no commands execute." if args.verification_report else
+          f"Mode: {server.mode}; labels: {labels} (created only after Save Review)", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

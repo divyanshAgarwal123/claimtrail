@@ -25,10 +25,14 @@ def case_summary(episode: dict, review: dict | None, mode: str, turns: dict, own
             "before": [], "later": [], "unresolved": [],
         }
         metadata = citation_metadata(episode, {"units": [{"evidence_ids": sorted(chosen)}]}, turns, owners)
-        for tid in sorted(chosen, key=lambda tid: (turns[tid]["created_at"], tid)):
+        for tid in sorted(chosen, key=lambda tid: (turns[tid]["created_at"], turns[tid].get("source_sequence", [-1, -1]), tid)):
             group = "before" if metadata[tid]["phase"] == "before" else "later"
             if len(summary[group]) < 3:
-                summary[group].append({"text": "Cited source record" if review is not None else "Retrieved lead; not a support judgment",
+                text = "Cited source record" if review is not None else "Retrieved lead; not a support judgment"
+                if mode == "goose_session":
+                    tool = turns[tid]["agent_action"].get("tool_name", "Unmatched tool")
+                    text = tool + ": " + turns[tid]["goose"]["tool_observation"]
+                summary[group].append({"text": text,
                                        "turn_ids": [tid]})
         uncertain = [u["text"] for u in (review or {}).get("units", [])
                      if u.get("status", "") in {"", "unresolved", "mixed"}]
@@ -38,12 +42,15 @@ def case_summary(episode: dict, review: dict | None, mode: str, turns: dict, own
         if not uncertain:
             summary["unresolved"] = ["No unresolved unit is recorded in this saved assessment; this is not an independent completeness check." if review else
                                       "No reviewed conclusion. Retrieved matches alone do not establish completion."]
-        summary["unresolved"].append("Later evidence does not establish state at claim time; uninspected screenshots remain outside this review.")
+        summary["unresolved"].append(
+            "Later results do not establish that a check completed before this claim. This import does not verify filesystem freshness."
+            if mode == "goose_session" else
+            "Later evidence does not establish state at claim time; uninspected screenshots remain outside this review.")
     for group, phase in (("before", "before"), ("later", "after")):
         for observation in summary[group]:
             pins = citation_metadata(episode, {"units": [{"evidence_ids": observation["turn_ids"]}]}, turns, owners)
             observation["sources"] = []
-            for tid in sorted(pins, key=lambda tid: (pins[tid]["created_at"], tid)):
+            for tid in sorted(pins, key=lambda tid: (pins[tid]["created_at"], turns[tid].get("source_sequence", [-1, -1]), tid)):
                 metadata = pins[tid]
                 if metadata["phase"] != phase:
                     raise ValueError("Case summary source is on the wrong side of claim time: " + tid)

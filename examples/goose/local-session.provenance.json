@@ -1,0 +1,20 @@
+{
+  "origin": "Recorded local Goose session on a deliberately broken two-test fixture; not a natural-use benchmark",
+  "goose_version": "1.59.0",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "session_id": "20261113_1",
+  "original_export_sha256": "712d16a7713a90cd0664235b2a602961afdf03397320a61583984610b32726f0",
+  "redacted_export_sha256": "b904cdd1315b3f86c8daa8a35c9232de4efd36d97a79adeb1813c483886984f5",
+  "redactions": [
+    "Replace the absolute fixture working-directory prefix with $WORKSPACE",
+    "Remove 5 thinking content blocks; preserve user/assistant text and all tool requests/results"
+  ],
+  "observations": {
+    "initial_test_exit_code": 1,
+    "later_test_exit_code": 0,
+    "second_test_execution_recorded_before_initial_claim": false
+  },
+  "binary_archive_sha256": "0e7d8be54aa523689ff91e764f9ee4ee5fb0a67395d9289241b9982c50987263",
+  "release_url": "https://github.com/aaif-goose/goose/releases/tag/v1.59.0"
+}

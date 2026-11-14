@@ -3,14 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Trace an agent's completion claim to the tool results recorded before and after it.">
   <title>ClaimTrail · Evidence Review</title>
   <link rel="stylesheet" href="/review.css">
   <script defer src="/review.js"></script>
 </head>
 <body>
+  <a class="skip-link" href="#workspace">Skip to evidence review</a>
   <header class="topbar">
-    <div class="brand"><span class="brandmark">CT</span><div><strong>ClaimTrail</strong><small>Evidence review · local only</small></div></div>
-    <div class="topright"><span id="progress">Loading queue…</span><a id="export-reviews" href="/api/export" download>Export human labels</a></div>
+    <div class="brand"><span class="brandmark" aria-hidden="true">CT</span><div><strong>ClaimTrail</strong><small>Agent evidence workbench</small></div></div>
+    <div class="topright"><span class="local-indicator">Local workspace</span><span id="progress">Loading queue…</span><a id="export-reviews" href="/api/export" download>Export human labels</a></div>
   </header>
   <div class="layout">
     <aside class="sidebar">
@@ -20,7 +22,7 @@
       </div>
       <nav id="episode-list" aria-label="Review episodes"></nav>
     </aside>
-    <main id="workspace">
+    <main id="workspace" tabindex="-1">
       <div id="loading" class="empty">Loading review bundle…</div>
       <div id="episode-view" hidden>
         <section class="intro">
@@ -28,17 +30,18 @@
           <h1 id="episode-heading"></h1>
           <div id="episode-meta" class="meta"></div>
           <div class="episode-actions"><button id="previous-episode" type="button">← Previous</button><button id="next-episode" type="button">Next →</button><button id="next-open" type="button">Next needing review</button></div>
-          <div class="callout"><strong>Claim → observed action → review</strong><p id="episode-guidance"></p>Retrieved turns are leads, not verdicts. Keep missing or conflicting evidence unresolved.</div>
+          <details class="callout"><summary>How to read this evidence</summary><p id="episode-guidance"></p><p>Retrieved turns are leads, not verdicts. Keep missing or conflicting evidence unresolved.</p></details>
           <p id="review-provenance" class="review-provenance" role="status"></p>
           <details class="policy-details"><summary>Saved review policy</summary><pre id="assessment-policy"></pre></details>
         </section>
         <section id="case-summary" class="case-summary" aria-labelledby="case-summary-heading">
-          <div class="section-title"><div><h2 id="case-summary-heading">Case at a glance</h2><p id="summary-attribution"></p></div><a href="#original-message">Read full claim ↓</a></div>
+          <div class="section-title"><div><h2 id="case-summary-heading">Claim and evidence</h2><p id="summary-attribution"></p></div><a href="#original-message">View original message ↗</a></div>
+          <p class="summary-kicker">Claim excerpt</p>
           <p id="summary-assertion" class="summary-assertion"></p>
           <div class="summary-grid">
-            <section><h3>Before / at claim</h3><div id="summary-before"></div></section>
-            <section class="summary-later"><h3>Later evidence / context</h3><div id="summary-later"></div></section>
-            <section class="summary-unresolved"><h3>Still unresolved</h3><ul id="summary-unresolved"></ul></section>
+            <section><h3><span class="phase-dot" aria-hidden="true"></span>Recorded before the claim</h3><div id="summary-before"></div></section>
+            <section class="summary-later"><h3><span class="phase-dot" aria-hidden="true"></span>Recorded later</h3><div id="summary-later"></div></section>
+            <section class="summary-unresolved"><h3>Review boundary</h3><ul id="summary-unresolved"></ul></section>
           </div>
           <p id="summary-note" class="summary-note"></p><p id="summary-save-state" class="summary-note" aria-live="polite"></p>
         </section>

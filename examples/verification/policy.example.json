@@ -1,0 +1,9 @@
+{
+  "check_id": "claimtrail.unit-tests",
+  "description": "ClaimTrail unit tests, bound to the declared implementation, tests and fixtures",
+  "command": ["python3", "-S", "-B", "-m", "unittest", "discover", "-s", "tests", "-v"],
+  "scope": ["src", "tests", "web", "examples", ".github"],
+  "exclude": ["**/__pycache__"],
+  "env": {},
+  "timeout_seconds": 120
+}

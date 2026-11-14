@@ -19,6 +19,22 @@ function node(tag, className = "", text = "") {
   return e;
 }
 
+function claimExcerpt(text) {
+  return text.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/`([^`]+)`/g, "$1");
+}
+
+function actionExcerpt(text) {
+  try {
+    const action = JSON.parse(text), args = action.arguments;
+    if (typeof args?.command === "string") return args.command;
+    if (action.tool_name === "edit" && typeof args?.path === "string" &&
+        typeof args.before === "string" && typeof args.after === "string") {
+      return `${args.path.split(/[\\/]/).pop()}\n\nBefore: ${args.before}\nAfter:  ${args.after}`;
+    }
+  } catch (_) { /* Keep incomplete excerpts as recorded text. */ }
+  return text;
+}
+
 function markDirty() {
   state.editVersion++;
   state.dirty = true;
@@ -45,9 +61,11 @@ function updateNavigation() {
     shown++;
     const button = node("button", "episode-nav" + (item.claim_id === state.activeId ? " active" : ""));
     button.type = "button";
+    if (item.claim_id === state.activeId) button.setAttribute("aria-current", "true");
     const num = node("span", "episode-number", String(index + 1).padStart(2, "0"));
     const info = node("span", "episode-info");
-    info.append(node("strong", "", item.agent_name), node("small", "", item.created_at.slice(5, 16) + " UTC"));
+    info.append(node("strong", "", state.source.mode === "goose_session" ? claimExcerpt(item.preview) : item.agent_name),
+                node("small", "", item.created_at.slice(5, 16) + " UTC"));
     const status = item.total_units ? `${item.labeled_units}/${item.total_units} units labeled` : "Unreviewed";
     info.append(node("small", "tag" + (item.total_units ? "" : " empty"), status));
     button.append(num, info);
@@ -56,7 +74,7 @@ function updateNavigation() {
   }
   const complete = state.items.filter(x => x.total_units && x.labeled_units === x.total_units).length;
   $("#progress").textContent = `${complete}/${state.items.length} fully labeled`;
-  $("#queue-summary").textContent = `${shown} of ${state.items.length} shown` + (state.source.queue_seed ? ` · seed ${state.source.queue_seed}` : state.source.mode === "development_review" ? " · excluded from held-out evaluation" : " · invented examples");
+  $("#queue-summary").textContent = `${shown} of ${state.items.length} shown` + (state.source.queue_seed ? ` · seed ${state.source.queue_seed}` : state.source.mode === "goose_session" ? " · recorded Goose messages" : state.source.mode === "development_review" ? " · excluded from held-out evaluation" : " · invented examples");
   if (!shown) nav.append(node("p", "empty-queue", "No episodes match these filters."));
   const index = state.items.findIndex(x => x.claim_id === state.activeId);
   $("#previous-episode").disabled = index <= 0;
@@ -175,21 +193,26 @@ function citeTurn(id) {
 function evidenceCard(e) {
   const card = node("article", "evidence-card" + (e.phase === "after" ? " after" : "") + (!e.same_agent ? " other" : ""));
   const head = node("header");
-  head.append(node("time", "", e.created_at + " UTC"), node("span", "record-id", e.turn_id));
+  const when = node("time", "", e.created_at.slice(11, 19) + " UTC");
+  when.title = e.created_at + " UTC · " + e.turn_id;
+  head.append(node("strong", "evidence-observation", e.tool_observation || "Recorded action"), when);
   card.append(head);
   const pills = node("div", "pills");
-  pills.append(node("span", "pill" + (e.phase === "after" ? " after" : ""), e.phase === "after" ? "After claim" : "Before claim"));
+  pills.append(node("span", "pill" + (e.phase === "after" ? " after" : ""), e.phase === "after" ? "After claim" : "Before / at claim"));
   pills.append(node("span", "pill" + (!e.same_agent ? " other" : ""), `${e.same_agent ? "Claimant" : "Other agent"} · ${e.actor_name || "Unknown"}`));
   if (e.screenshot_is_redacted) pills.append(node("span", "pill", "Screenshot redacted"));
   if (e.evidence_stage) pills.append(node("span", "pill", e.evidence_stage.replaceAll("_", " ")));
-  if (Number.isFinite(e.record_offset_seconds)) pills.append(node("span", "pill", `Record time: ${e.record_offset_seconds >= 0 ? "+" : ""}${e.record_offset_seconds.toFixed(3)}s from claim`));
+  if (Number.isFinite(e.record_offset_seconds)) {
+    const seconds = e.record_offset_seconds;
+    pills.append(node("span", "pill offset", `${seconds >= 0 ? "+" : ""}${Number.isInteger(seconds) ? seconds : seconds.toFixed(3)}s from claim`));
+  }
   card.append(pills);
-  for (const [label, value, className] of [["Action", e.action_excerpt, ""], ["Tool output", e.output_excerpt, ""], ["Stderr / errors (inspect content)", e.error_excerpt, "stderr"]]) {
+  for (const [label, value, className] of [["Action", actionExcerpt(e.action_excerpt), ""], ["Tool output", e.output_excerpt, ""], ["Stderr / errors (inspect content)", e.error_excerpt, "stderr"]]) {
     if (!value || value === "{}") continue;
     card.append(node("div", "record-id", label), node("pre", className, value));
   }
-  const source = state.source.mode === "synthetic_demo" ? "invented teaching record" : `pinned Parquet revision ${state.source.parquet_revision.slice(0, 12)}`;
-  card.append(node("div", "record-id", `Session ${e.session_id} · ${e.source_shard} · ${source}`));
+  const source = state.source.mode === "goose_session" ? `Goose export SHA-256 ${state.source.main_revision.slice(0, 12)}` : state.source.mode === "synthetic_demo" ? "invented teaching record" : `pinned Parquet revision ${state.source.parquet_revision.slice(0, 12)}`;
+  card.append(node("div", "record-id", `${e.source_shard} · ${source}`));
   const route = node("details", "route");
   route.append(node("summary", "record-id", "Why this turn was retrieved"),
                node("div", "record-id", e.retrieved_by.join(", ")));
@@ -215,7 +238,11 @@ async function showTurn(id) {
       if (value === null || value === undefined || value === "") continue;
       body.append(node("h3", "", name), node("pre", "", typeof value === "string" ? value : JSON.stringify(value, null, 2)));
     }
-    body.append(node("p", "record-id", `screenshot_is_redacted=${turn.screenshot_is_redacted}; has_redaction_been_overruled=${turn.has_redaction_been_overruled}`));
+    if (turn.goose) {
+      body.append(node("h3", "", "Original Goose tool events"), node("pre", "", JSON.stringify(turn.goose, null, 2)));
+    } else {
+      body.append(node("p", "record-id", `screenshot_is_redacted=${turn.screenshot_is_redacted}; has_redaction_been_overruled=${turn.has_redaction_been_overruled}`));
+    }
     if (!$("#record-dialog").open) $("#record-dialog").showModal();
   } catch (error) { alert(error.message); }
 }
@@ -228,7 +255,9 @@ function renderIntegrity(integrity, policy) {
 
 function renderSummary(summary) {
   $("#summary-attribution").textContent = summary.attribution;
-  $("#summary-assertion").textContent = summary.assertion;
+  const excerpt = state.source.mode === "goose_session" && summary.attribution === "Unreviewed retrieval overview"
+    ? state.episode.proposed_units?.[0]?.text || summary.assertion : summary.assertion;
+  $("#summary-assertion").textContent = claimExcerpt(excerpt);
   $("#summary-note").textContent = summary.note;
   for (const group of ["before", "later"]) {
     const list = $("#summary-" + group); list.replaceChildren();
@@ -238,7 +267,8 @@ function renderSummary(summary) {
       const links = node("div", "summary-sources");
       for (const source of observation.sources) {
         const offset = source.record_offset_seconds;
-        const text = `${source.actor_name} · ${offset > 0 ? "+" : ""}${offset.toFixed(3)}s · ${source.phase === "after" ? "after claim" : "before / at claim"}`;
+        const seconds = Number.isInteger(offset) ? offset : offset.toFixed(3);
+        const text = `${source.actor_name} · ${offset > 0 ? "+" : ""}${seconds}s · View record ↗`;
         const link = node("button", "summary-source", text);
         link.type = "button"; link.dataset.turnId = source.turn_id;
         link.title = `Open source ${source.turn_id} · ${source.created_at} UTC`;
@@ -259,13 +289,15 @@ function renderEpisode(episode, review, summary, integrity) {
   $("#loading").hidden = true; $("#episode-view").hidden = false;
   const index = state.items.findIndex(x => x.claim_id === episode.claim_id);
   $("#position").textContent = `Episode ${index + 1} of ${state.items.length}`;
-  $("#episode-heading").textContent = episode.case_title || episode.agent_name + " · completion-claim candidate";
-  $("#episode-meta").textContent = `${episode.agent_name} · ${episode.created_at} UTC · message ${episode.claim_id}`;
+  $("#episode-heading").textContent = episode.case_title || (state.source.mode === "goose_session" ? "Completion evidence review" : episode.agent_name + " · completion-claim candidate");
+  $("#episode-meta").textContent = `${episode.agent_name} · ${episode.created_at.slice(0, 19)} UTC`;
+  $("#episode-meta").title = `Message ${episode.claim_id}`;
   $("#original-message").textContent = episode.message;
   const demo = state.source.mode === "synthetic_demo";
+  const goose = state.source.mode === "goose_session";
   $("#message-description").textContent = demo ? "Invented agent message for demonstration" : "Exact agent chat text from the pinned export";
-  $("#provenance").textContent = demo ? "All messages and actions here are invented. Practice annotations are saved separately and never count as research findings." : `AI Digest / AI Village · main revision ${state.source.main_revision} · converted Parquet revision ${state.source.parquet_revision}. ${state.source.source_card}. This is a partial converted export, without screenshots; missing evidence does not establish failure.`;
-  $("#episode-guidance").textContent = episode.demo_lesson || (state.source.mode === "development_review" ? "These source records were selected during AI-assisted development. Check each assertion independently; this case cannot count toward held-out results." : "Inspect the recorded action and its result. Separate repository state, deployment state, and claims about what users could see.");
+  $("#provenance").textContent = goose ? `${state.source.source_description}. Conversation order resolves equal timestamps. A tool response can arrive successfully while its process exits nonzero. Missing records do not prove that an action never occurred outside this export.` : demo ? "All messages and actions here are invented. Practice annotations are saved separately and never count as research findings." : `AI Digest / AI Village · main revision ${state.source.main_revision} · converted Parquet revision ${state.source.parquet_revision}. ${state.source.source_card}. This is a partial converted export, without screenshots; missing evidence does not establish failure.`;
+  $("#episode-guidance").textContent = goose ? "Compare the assistant's exact statement with recorded tool results. Separate an attempted check, its process result, and any later verification. Imported messages are candidates for review, not automatic truth labels." : episode.demo_lesson || (state.source.mode === "development_review" ? "These source records were selected during AI-assisted development. Check each assertion independently; this case cannot count toward held-out results." : "Inspect the recorded action and its result. Separate repository state, deployment state, and claims about what users could see.");
   const before = episode.evidence.filter(e => e.phase === "before").length;
   const after = episode.evidence.length - before;
   const other = episode.evidence.filter(e => !e.same_agent).length;
@@ -355,10 +387,16 @@ async function init() {
     const demo = state.source.mode === "synthetic_demo";
     const development = state.source.mode === "development_review";
     const ai = state.source.mode === "ai_assisted_review";
-    $("#data-mode").textContent = demo ? "Synthetic demo · no dataset required" : development ? "Development cases · AI-assisted reconstruction" : ai ? "AI-assisted review · not independent validation" : "Research pilot · AI Village partial export";
+    const goose = state.source.mode === "goose_session";
+    $("#data-mode").textContent = goose ? "Goose session · recorded tool evidence" : demo ? "Synthetic demo · no dataset required" : development ? "Development cases · AI-assisted reconstruction" : ai ? "AI-assisted review · not independent validation" : "Research pilot · AI Village partial export";
     $("#data-mode").classList.toggle("demo", demo);
-    $("#queue-heading").textContent = demo ? "Practice cases" : development ? "Two development cases" : ai ? "25 AI-reviewed episodes" : "Frozen review queue";
-    $("#export-reviews").textContent = demo ? "Export practice labels" : development ? "Export case annotations" : ai ? "Export AI assessments" : "Export human labels";
+    $("#queue-heading").textContent = goose ? "Goose messages" : demo ? "Practice cases" : development ? "Two development cases" : ai ? "25 AI-reviewed episodes" : "Frozen review queue";
+    $("#export-reviews").textContent = goose ? "Export session annotations" : demo ? "Export practice labels" : development ? "Export case annotations" : ai ? "Export AI assessments" : "Export human labels";
+    if (goose) {
+      const route = node("option", "", "Goose tool records"); route.value = "goose session";
+      $("#lead-route").append(route);
+      $(".baseline").hidden = true;
+    }
     const citedRoute = node("option", "", "Saved citations"); citedRoute.value = "review citation";
     $("#lead-route").append(citedRoute);
     updateNavigation();
