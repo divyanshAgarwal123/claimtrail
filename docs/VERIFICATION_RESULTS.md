@@ -7,6 +7,23 @@ trials accepted a fresh receipt (exit 0) and rejected a stale one (exit 1 after
 the configured one-retry limit). These are mechanism and integration checks, not
 an independent accuracy benchmark or a natural agent failure rate.
 
+## Evidence units and claims
+
+| Evidence | Actual unit | What it establishes |
+| --- | --- | --- |
+| 30 controlled repository cases | 15 scenario types, each exercised in two pinned repositories | The specified policy/freshness contract handles those inputs. These are not 30 independent coding tasks. |
+| Six Goose stages | Fresh, host-edited and restored/rerun exports from each of two continuing sessions | Actual tool/session linkage and responses under guided conditions. Six exports are not six independent sessions. |
+| Two native recipe trials | One fresh acceptance and one controlled stale rejection | The existing Goose recipe gate can call this verifier. |
+| 47 ClaimTrail software tests | Import, verifier, source and interface regressions | Software behavior, not user demand or claim-detection accuracy. |
+| Upstream suite counts below | Captured executions of each repository's own tests | Real checks ran on the pinned revisions; these are not additional ClaimTrail evaluation tasks. |
+| Separate original Goose example | One deliberately constructed small coding task, followed by a requested rerun | The recorded first completion message lacked rerun evidence available at that time; the later run is kept separate. See the [original integration](GOOSE_INTEGRATION.md). |
+| Independent user studies, ordinary real-repository coding sessions and repeat users | None yet in this package | Practical usefulness, comparative review cost and adoption remain unmeasured. |
+
+The 36 matching rows are deterministic fixture replay, not a 36-trial accuracy
+estimate. Host observation time must not be relabelled as the earlier completion
+message time. A conservative stale result after a harmless edit does not mean
+the code is broken. These distinctions also apply to screenshots and proposals.
+
 ## Repositories and environment
 
 | Repository | Pinned revision | Captured unchanged full-suite outcome |
@@ -62,6 +79,14 @@ invalidation, an offline audit view and a gate callable from Goose's existing
 recipe checks. A custom Stop hook can implement similar logic. Existing
 [DoneProof receipt work](https://github.com/giugiu-a11y/doneproof/pull/35) overlaps;
 content-bound receipts are not claimed as a new invention.
+
+The recorded Goose sessions already contain ClaimTrail verifier outputs. They
+cannot stand in for a Goose-without-ClaimTrail control group. A comparison using
+them can measure presentation/review effort only, retaining every original tool
+result in both views. A live comparison needs separately collected ordinary
+tasks with the same check access in both conditions. The [developer validation
+plan](GOOSE_DEVELOPER_VALIDATION.md) separates those studies and prioritizes a
+developer's own change and voluntary repeat use.
 
 ## Actual Goose sessions and recipe gate
 

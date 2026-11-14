@@ -31,6 +31,8 @@ stale, policy mismatch and outside-scope outcomes in the controlled selection.
    repository revision and changed artifacts. Hide ClaimTrail's summary labels
    and author interpretations on the first pass. Scripted interventions must be
    disclosed in the reference material, not represented as ordinary agent errors.
+   Keep all original tool responses, even when they already contain verifier
+   statuses. Record that exposure; this is not a fully blinded audit.
 2. Ask whether each receipt satisfies the mechanical contract at that observation
    boundary. Separately ask whether the chosen check/scope is sufficient for the
    narrow completion claim. Allow unresolved answers to either question.
@@ -59,6 +61,10 @@ Each participant performs:
    tasks of comparable difficulty so a remembered answer cannot decide the
    second condition. Ask whether the presented check evidence applies at the
    captured completion boundary, with an explicit unresolved option.
+   Freeze the tasks before participant review. Existing guided Goose captures
+   already include ClaimTrail output, so using them measures presentation only,
+   not the effect of adding ClaimTrail to Goose. The live comparison requires
+   new ordinary tasks; allow normal verification commands in both conditions.
 3. **Optional repeat.** Invite an uncoached run on their own public change.
    Record whether they choose to repeat, whether they complete it, setup/policy
    work and why they would or would not use the workflow again.
@@ -67,6 +73,14 @@ The baseline supplies Goose's configured checks, transcript and artifacts, with
 a fresh correctly scoped rerun when normal review calls for it. ClaimTrail adds
 the receipt, changed-path explanation and joined evidence view. Both conditions
 must permit the same repository checks; record every extra rerun and its cost.
+
+Offline historical review cannot rerun a command at an earlier observation
+boundary. Treat that as a presentation task in both conditions, not a live
+completion-gating experiment. Never remove useful raw status/error output from
+the baseline to make ClaimTrail appear necessary. For the bounded first pilot,
+use the [developer validation plan](GOOSE_DEVELOPER_VALIDATION.md) and its
+[empty record template](../examples/pilot/trial.template.json). An assisted
+dry run by the author is setup rehearsal, not an independent pilot result.
 
 ## Record and publish
 

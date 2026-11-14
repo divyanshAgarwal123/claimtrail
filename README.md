@@ -14,7 +14,7 @@ Open **http://127.0.0.1:8768/**. The packaged captures can be replayed offline w
 
 ![ClaimTrail showing a stale receipt after a controlled source edit in a real More Itertools Goose session](docs/images/claimtrail-scope-desktop.png)
 
-The package includes 30 controlled repository cases, six Goose stages across two sessions, and actual fresh/stale Goose recipe trials. All 36 captured cases replay to their expected contract outcomes. The 47 local software tests pass. These establish implementation behavior, not independently measured accuracy or ordinary agent failure frequency.
+The package includes 15 controlled scenarios exercised in two repositories (30 cases), six guided Goose stages across two sessions, and actual fresh/stale Goose recipe trials. All 36 captured rows replay to their expected contract outcomes. The 47 software tests establish implementation behavior. Ordinary developer use and independent user benefit remain unmeasured; see the [evidence units](docs/VERIFICATION_RESULTS.md#evidence-units-and-claims) and [developer validation plan](docs/GOOSE_DEVELOPER_VALIDATION.md).
 
 Capture a check on your own clone with `src/scope_verification.py run`, then use `verify` against the same host-owned policy. The [guide](docs/SCOPE_VERIFICATION.md) explains the CLI, exit codes and Goose recipe integration. `verify` never executes a recorded command; `run` does.
 

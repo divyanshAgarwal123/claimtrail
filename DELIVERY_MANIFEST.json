@@ -14,16 +14,20 @@
       "sha256": "c3510d2290f1856e95ef8985702a51826b73e155d03f008744f6140078b8c78b"
     },
     "README.md": {
-      "bytes": 6434,
-      "sha256": "076673580fba2fa9ad5c66e5554e4c18812271add095d3addae66c2d5a1f2c73"
+      "bytes": 6604,
+      "sha256": "4164c8c3f60331ff05fa6997e477e103ba24215038990abdf936b10e2e18d12b"
     },
     "THIRD_PARTY_NOTICES.md": {
       "bytes": 1582,
       "sha256": "ff435a83e326a13b597cd0c92fac2281862df9b539367ada4dbfe2e7fb798760"
     },
+    "docs/GOOSE_DEVELOPER_VALIDATION.md": {
+      "bytes": 10754,
+      "sha256": "25e01826713ab8b4b582b0a967a6a4eeb79aa15e2185c7fcb55e1733b5ea31a7"
+    },
     "docs/GOOSE_INTEGRATION.md": {
-      "bytes": 5203,
-      "sha256": "35fe9a509e1046c9502f6795e389e3a804c3e112e415f3426ea185627faedff3"
+      "bytes": 5341,
+      "sha256": "e4a34310ba83f32103f36a9d7e173a11f4903eab6957fc4e7c4e985166bb148b"
     },
     "docs/PROJECT_OVERVIEW.md": {
       "bytes": 2294,
@@ -34,8 +38,8 @@
       "sha256": "3dcb3966f125bec8b187caa8ff3e1fa8177a70454ca2ad37d50ee219578ecf51"
     },
     "docs/REVIEWER_GUIDE.md": {
-      "bytes": 5319,
-      "sha256": "da7a1bf1fa9ea42e90f78013a8ab9a4bab7f68830f098228c9e4f2ebcefef8b4"
+      "bytes": 6315,
+      "sha256": "6f0f8382c52c0551acfb76720998f5767d8432a6650f969c523c5cd43b717043"
     },
     "docs/SCOPE_VERIFICATION.md": {
       "bytes": 7020,
@@ -46,16 +50,16 @@
       "sha256": "1e98a8a4041bb23535e15f428e7499051c1d71c75d4adb707df09c21553ac5d7"
     },
     "docs/SPIRAL_PROPOSAL.md": {
-      "bytes": 8982,
-      "sha256": "8604c72b5ee796e25b96cb841d2f2d243b36d65b3ad3477d963f00ecaa320c2d"
+      "bytes": 9461,
+      "sha256": "66d8e81cde89e5674b91c904ce09d7814386807962bf2cb54cbfe9c1a843fbb1"
     },
     "docs/SYNTHETIC_DEMO.md": {
       "bytes": 4116,
       "sha256": "de70caf708b23f015dac209567a7c80637b29f0074adf1eedb1ae7b88960bf8f"
     },
     "docs/VERIFICATION_RESULTS.md": {
-      "bytes": 7208,
-      "sha256": "f66eefacfebce94e5f081f1d0f3cdd45b885d2427d26a0f6325dce7bdabe08dc"
+      "bytes": 9537,
+      "sha256": "e80807d297d195ea79b397efaee15c3c0a5ba1e720aa71aafc0f862182950d55"
     },
     "docs/images/claimtrail-goose-desktop.png": {
       "bytes": 82121,
@@ -96,6 +100,10 @@
     "examples/goose/local-session.redacted.json": {
       "bytes": 15086,
       "sha256": "b904cdd1315b3f86c8daa8a35c9232de4efd36d97a79adeb1813c483886984f5"
+    },
+    "examples/pilot/trial.template.json": {
+      "bytes": 1924,
+      "sha256": "01dfd29c82151f14d442d47d3b62352206e79db25536b11172f6eebe4935c8b1"
     },
     "examples/verification/environment.txt": {
       "bytes": 133,
@@ -291,7 +299,7 @@
     }
   },
   "kind": "ClaimTrail submission source and evidence inventory",
-  "notes": "Includes 30 controlled real-repository cases, six completed Goose stages, visible native recipe trials and transformation provenance. Raw research data, private runtime logs and binaries are excluded.",
+  "notes": "Includes 15 controlled scenarios on two repositories (30 cases), six guided Goose stages across two sessions, native recipe trials and transformation provenance. The pilot template contains no participant observations. Raw research data, private runtime logs and binaries are excluded.",
   "raw_research_records_included": false,
   "real_annotations_included": false,
   "real_records_included": true,
