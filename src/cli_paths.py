@@ -1,4 +1,6 @@
 """Host-configured CLI boundaries for accidental agent-supplied paths and options."""
+from __future__ import annotations
+
 import os
 import re
 import shutil

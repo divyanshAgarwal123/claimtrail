@@ -178,8 +178,8 @@
       "sha256": "14ec8987eed52db0f7fda9706cb57c489e92684704d36e91d695bd1c814cb11f"
     },
     "src/cli_paths.py": {
-      "bytes": 1381,
-      "sha256": "78669c4d2e0f5757939653b7349afaacd1d8ad837065200e0c747f0f0594b831"
+      "bytes": 1417,
+      "sha256": "24027c564c07fb15e4eabbcd5fbaca0008325146c1a9e13b2f242949a4fd06e6"
     },
     "src/demo_data.py": {
       "bytes": 6349,
