@@ -16,7 +16,7 @@ around an award. The amount should remain open for discussion with Spiral.
 The implementation now binds a configured check to declared file content and a
 later observation, with explicit rejection of stale or mismatched evidence. The
 session viewer remains the inspection interface. Automatic semantic scope
-selection and dependency/environment attestation remain future work.
+selection and dependency/environment attestation are not established by this work.
 
 ## Recent AI recipients
 
@@ -73,10 +73,10 @@ pull request is neither proof of deployment nor evidence that the whole problem
 is solved. ClaimTrail's value must be established through the Goose workflow and
 measured review/checking benefits.
 
-The implementation and evidence are publicly reviewable in
-[draft PR 1](https://github.com/divyanshAgarwal123/claimtrail/pull/1). They have not
-been merged to the default branch. MIT licensing and separate dataset/upstream
-notices are included.
+The implementation and evidence were merged to the default branch in
+[PR 1](https://github.com/divyanshAgarwal123/claimtrail/pull/1). This is a merge in
+ClaimTrail's own repository, not upstream Goose acceptance. MIT licensing and
+separate dataset/upstream notices are included.
 
 ## A bounded next step
 
@@ -86,21 +86,14 @@ ordinary-use sessions with independently reviewed outcomes. Record counterexampl
 and limits, not just demonstrations that succeed. These are recommendations,
 not published Spiral requirements or secured commitments.
 
-At **20–25 hours per week**, a proposed 12-week first phase is about **240–300
-hours**, including documentation and feedback:
-
-1. Weeks 1–4: harden import and evidence inspection on ordinary repository tasks,
-   document failure cases, and agree a narrow checker scope with users.
-2. Weeks 5–8: prototype revision-bound receipts for one check type, including
-   invalidation after edits and explicit unresolved cases. Evaluate against
-   configured Goose checks rather than claiming all existing tools lack checks.
-3. Weeks 9–12: have someone other than the author review a small frozen set;
-   report false positives, misses and review effort; deliver a reproducible
-   package and a continuation decision.
-
-This is a proposed milestone budget, not a promise that independent reviewers or
-an upstream pilot are already secured. A longer roadmap should depend on the
-first phase's results.
+The [canonical 12-week plan](SPIRAL_PROPOSAL.md#funded-work-and-12-week-deliverables)
+budgets **240 core hours** at 20 hours per week, with up to **60 contingency
+hours** within the stated 20–25 hour availability. It packages the existing
+mechanism for ordinary Goose sessions, evaluates 30 new ordinary sessions, and
+targets an independent technical audit plus two uncoached user pilots. The
+[testing protocol](REVIEWER_GUIDE.md) makes recruitment, comparisons and negative
+outcomes explicit. No reviewer or participant is currently secured. Longer
+funding should depend on the first phase's results.
 
 ## Current terms remain open
 

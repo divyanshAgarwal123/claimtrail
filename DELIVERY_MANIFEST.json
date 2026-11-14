@@ -34,20 +34,20 @@
       "sha256": "3dcb3966f125bec8b187caa8ff3e1fa8177a70454ca2ad37d50ee219578ecf51"
     },
     "docs/REVIEWER_GUIDE.md": {
-      "bytes": 1818,
-      "sha256": "254044f93de1401c6a1a133c8bd96fb3de1bf34f4a04222c156d36a64595b4e8"
+      "bytes": 5319,
+      "sha256": "da7a1bf1fa9ea42e90f78013a8ab9a4bab7f68830f098228c9e4f2ebcefef8b4"
     },
     "docs/SCOPE_VERIFICATION.md": {
       "bytes": 7020,
       "sha256": "eda8ac2e541b8b8b51dda65caea9940938652141445e353c96ee3947e2a83e10"
     },
     "docs/SPIRAL_FIT_REVIEW.md": {
-      "bytes": 7637,
-      "sha256": "689bfb1f33dd55a2aeb52cbabc9337460748886ee002d4314c2698e565eb8f9a"
+      "bytes": 7389,
+      "sha256": "1e98a8a4041bb23535e15f428e7499051c1d71c75d4adb707df09c21553ac5d7"
     },
     "docs/SPIRAL_PROPOSAL.md": {
-      "bytes": 6543,
-      "sha256": "89a7a6029d1ca0d8975fce0e537c86f66f2b72145f9d18ad3ca35fab3afc6460"
+      "bytes": 8982,
+      "sha256": "8604c72b5ee796e25b96cb841d2f2d243b36d65b3ad3477d963f00ecaa320c2d"
     },
     "docs/SYNTHETIC_DEMO.md": {
       "bytes": 4116,
@@ -292,9 +292,9 @@
   },
   "kind": "ClaimTrail submission source and evidence inventory",
   "notes": "Includes 30 controlled real-repository cases, six completed Goose stages, visible native recipe trials and transformation provenance. Raw research data, private runtime logs and binaries are excluded.",
+  "raw_research_records_included": false,
   "real_annotations_included": false,
   "real_records_included": true,
-  "raw_research_records_included": false,
   "recorded_sources_included": [
     "Redacted local Goose 1.59.0 / Ollama qwen3:8b session",
     "Scope receipts and snapshots for pinned More Itertools and ItsDangerous",
