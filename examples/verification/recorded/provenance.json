@@ -1,0 +1,43 @@
+{
+  "original_controlled_report_sha256": "1bceabef5f7c33fe2dc7f3a9f928319b94482b38e20c495f7d18ddd0b1a8fdea",
+  "original_goose_report_sha256": "157e867414261438d43c3d684a659b13a58a30153a137a4d0750155cc47d76fa",
+  "sessions": [
+    {
+      "file": "sessions/more-itertools.goose_fresh.json",
+      "original_sha256": "7712e5f3ee62e6610fa8e262c0f480f57c29b316e6a877bfe63914a176332758",
+      "redacted_sha256": "5c2b39267c4b330d97786cde293deb43f31a5feee60b07918b032343aeeb7675"
+    },
+    {
+      "file": "sessions/more-itertools.goose_after_edit.json",
+      "original_sha256": "f8767aeabe3a156de515f5958fea57741e435d3a22fcc042f42b2681a29ee2d2",
+      "redacted_sha256": "ce87634bd5e2ef76adc95662928d52ab07275a439a1c72688c2378b4790cc6e1"
+    },
+    {
+      "file": "sessions/more-itertools.goose_rerun.json",
+      "original_sha256": "da124204c286328f9ad45fc874eef2156fd9d3e987011cba170c996f4effee29",
+      "redacted_sha256": "a8c7a31244daba9cbefeeafc03df13634826cc92b3fde5f49a202def2cfae399"
+    },
+    {
+      "file": "sessions/itsdangerous.goose_fresh.json",
+      "original_sha256": "5e1a8322a81702e996735dcf3468915d23ca38e212ebd1c9d8ed20bd528438dc",
+      "redacted_sha256": "e1f413a3d2849ca9b0a8c6be7d002e7de5ebd830b12506243cba9e12848a2422"
+    },
+    {
+      "file": "sessions/itsdangerous.goose_after_edit.json",
+      "original_sha256": "c4f0373acb8bed14253d61af8be3b4383998221331575e4830312c1fa8b7ecda",
+      "redacted_sha256": "393dfbf6c1956f8a845c0a646afc10fa3dc2aa0ccf8361e8d7fcbbc530e6856a"
+    },
+    {
+      "file": "sessions/itsdangerous.goose_rerun.json",
+      "original_sha256": "fad970fd7b62b5ab8cd85746da1e0ce7fad90ad35e33c1f6791205f08e096ed1",
+      "redacted_sha256": "3f22e73c1b3dc5772cbd349e382a6e82545d9f836b50c82f0545d4934954f949"
+    }
+  ],
+  "transformations": [
+    "Replace ClaimTrail and Goose workspace paths in session text with $CLAIMTRAIL and $WORKSPACE.",
+    "Remove thinking blocks; retain messages, tool IDs, results and process exit codes.",
+    "Update report source references to the redacted exports; execution receipts and snapshots remain unchanged."
+  ],
+  "limits": "Local capture and transformation provenance, not independent authenticity attestation.",
+  "original_recipe_trials_sha256": "58eb4216446e44f89d0d520a186f908be3d84f3a436e514462f3932b2ef684cb"
+}

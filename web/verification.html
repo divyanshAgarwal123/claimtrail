@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClaimTrail · Scope and freshness</title>
+  <link rel="stylesheet" href="/review.css"><link rel="stylesheet" href="/verification.css">
+  <script defer src="/verification.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to verification case</a>
+  <header class="topbar"><div class="brand"><span class="brandmark" aria-hidden="true">CT</span><div><strong>ClaimTrail</strong><small>Scope and freshness verification</small></div></div><div class="topright"><span class="local-indicator">Read-only evidence</span><span id="counts">Replaying captures…</span></div></header>
+  <div class="layout">
+    <aside class="sidebar"><div class="sidebar-head"><h2>Recorded cases</h2><p id="queue-summary"></p><label class="sr-only" for="repo-filter">Repository</label><select id="repo-filter"><option value="all">All repositories</option></select><label class="sr-only" for="status-filter">Verification result</label><select id="status-filter"><option value="all">All results</option><option value="verified">Verified contract</option><option value="stale">Stale evidence</option><option value="scope_mismatch">Wrong policy or scope</option></select></div><nav id="case-list" aria-label="Verification cases"></nav></aside>
+    <main id="workspace" tabindex="-1"><p id="loading" class="empty">Replaying captured evidence…</p><div id="case-view" hidden>
+      <section class="intro"><div class="context-line"><span id="repo-name"></span><span id="case-kind"></span></div><h1 id="case-heading"></h1><p id="revision" class="meta"></p><p id="case-note" class="verification-note"></p></section>
+      <section class="verdict-section"><div id="verdict" class="verdict"><span id="verdict-label"></span><h2 id="verdict-reason"></h2><p id="observation-time"></p></div><div class="scope-grid"><section><h3>Required check</h3><pre id="required-command"></pre><p id="required-id" class="meta"></p></section><section><h3>Declared filesystem scope</h3><div id="scope-roots" class="scope-roots"></div><p id="excluded" class="meta"></p></section></div><div id="changes-wrap"><h3>Changed paths</h3><ul id="changed-paths"></ul></div></section>
+      <section class="capture-section"><div class="section-title"><div><h2>Execution → observation</h2><p>Results are recalculated from the captured policy, receipt and observation.</p></div></div><div class="capture-grid"><section><h3>Captured execution</h3><p id="execution-status"></p><p id="execution-time" class="meta"></p><pre id="captured-command"></pre><p id="captured-scope" class="meta"></p><pre id="output"></pre></section><section><h3>Content binding</h3><dl id="hashes"></dl><p id="baseline" class="verification-note"></p></section></div><details id="claim-wrap" hidden><summary>Exact Goose message</summary><pre id="claim-text"></pre><p id="claim-boundary" class="meta"></p></details><details><summary>Policy and raw captured records</summary><pre id="raw-records"></pre></details></section>
+      <footer class="verification-footer"><h2>What this establishes</h2><p>A verified result means the configured command exited zero and its declared files match the captured observation. Policy selection is explicit; ClaimTrail does not infer semantic coverage from a test name.</p><ul id="report-limits"></ul><p>Goose recipes and Stop hooks can run this verifier as a host-side check. Correctly scoped fresh tests remain a valid baseline. These captures are unsigned local evidence, with no independent human validation.</p></footer>
+    </div></main>
+  </div>
+</body></html>

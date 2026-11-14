@@ -93,9 +93,18 @@ class ReviewServer(HTTPServer):
     def __init__(self, address, handler, bundle_path: Path | None, turns_path: Path | None,
                  labels_path: Path, sessions_path: Path | None = None, demo: bool = False,
                  development: bool = False, ai_review: bool = False,
-                 goose_session: Path | None = None):
-        if sum((demo, development, ai_review, goose_session is not None)) > 1:
+                 goose_session: Path | None = None, verification_report: Path | None = None):
+        if sum((demo, development, ai_review, goose_session is not None, verification_report is not None)) > 1:
             raise ValueError("choose one review mode")
+        self.verification_report = verification_report
+        if verification_report:
+            from verification_report import load_report
+            self.verification, extra = load_report(verification_report)
+            self.mode = "scope_verification"
+            self.sources = SourceSnapshot({"verification_report": verification_report, **extra})
+            self.sources.check()
+            super().__init__(address, handler)
+            return
         self.mode = "goose_session" if goose_session else "synthetic_demo" if demo else "development_review" if development else "ai_assisted_review" if ai_review else "research"
         if self.mode != "research" and labels_path.resolve() == LABELS.resolve():
             raise ValueError("non-research annotations must not overwrite research reviews")
@@ -248,6 +257,15 @@ class Handler(BaseHTTPRequestHandler):
     def _get(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        if self.server.verification_report:
+            if path == "/api/verification":
+                return self._json(self.server.verification)
+            files = {"/": ("verification.html", "text/html"), "/verification.js": ("verification.js", "text/javascript"),
+                     "/review.css": ("review.css", "text/css"), "/verification.css": ("verification.css", "text/css")}
+            if path in files:
+                name, mime = files[path]
+                return self._send((WEB / name).read_bytes(), mime)
+            return self._error("not found", 404)
         if path in {"/", "/review.js", "/review.css"}:
             name = {"/": "review.html", "/review.js": "review.js", "/review.css": "review.css"}[path]
             mime = "text/html" if name.endswith(".html") else "text/javascript" if name.endswith(".js") else "text/css"
@@ -338,6 +356,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self._safe_host():
             return self._error("local host only", 403)
+        if self.server.verification_report:
+            return self._error("verification reports are read-only", 405)
         origin = self.headers.get("Origin")
         if origin not in {f"http://127.0.0.1:{self.server.server_port}",
                           f"http://localhost:{self.server.server_port}"}:
@@ -411,9 +431,10 @@ def main():
     modes.add_argument("--development", action="store_true", help="inspect the two source-checked development cases; separate from the held-out queue")
     modes.add_argument("--ai-review", action="store_true", help="inspect AI-assisted assessments; never treated as human validation")
     modes.add_argument("--goose-session", type=Path, help="inspect a Goose session export produced with --format json")
+    modes.add_argument("--verification-report", type=Path, help="replay captured scope/freshness evidence; never runs commands")
     args = parser.parse_args()
     bundle = args.bundle or DERIVED / ("development_bundle.json" if args.development else "review_bundle.json")
-    if not args.demo and not args.goose_session and not bundle.exists():
+    if not args.demo and not args.goose_session and not args.verification_report and not bundle.exists():
         parser.error("review bundle missing; run python3 src/review_bundle.py first")
     labels = args.labels or (args.goose_session.with_name(args.goose_session.stem + ".claimtrail-reviews.json") if args.goose_session else ROOT / "data/demo/reviews.json" if args.demo else DERIVED / "development_reviews.json" if args.development else DERIVED / "ai_reviews.json" if args.ai_review else LABELS)
     if (args.demo or args.development or args.ai_review or args.goose_session) and labels.resolve() == LABELS.resolve():
@@ -421,9 +442,10 @@ def main():
     if args.goose_session and labels.resolve() == args.goose_session.resolve():
         parser.error("Goose annotations must not overwrite the source export")
     server = ReviewServer(("127.0.0.1", args.port), Handler, bundle, args.turns, labels,
-                          args.sessions, args.demo, args.development, args.ai_review, args.goose_session)
+                          args.sessions, args.demo, args.development, args.ai_review, args.goose_session, args.verification_report)
     print(f"ClaimTrail review: http://127.0.0.1:{server.server_port}/", flush=True)
-    print(f"Mode: {server.mode}; labels: {labels} (created only after Save Review)", flush=True)
+    print("Read-only verification report; no commands execute." if args.verification_report else
+          f"Mode: {server.mode}; labels: {labels} (created only after Save Review)", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

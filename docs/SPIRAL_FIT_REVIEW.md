@@ -1,7 +1,11 @@
 # Spiral grant fit review
 
-Checked 14 November 2026. This is project planning, not an application submission
-or a prediction of an award.
+Grant sources checked 14 November 2026. This assessment preceded the scope and
+freshness implementation. The [current results](VERIFICATION_RESULTS.md) and
+[updated proposal](SPIRAL_PROPOSAL.md) supersede its implementation/readiness
+snapshot below. MIT licensing, real-repository captures and an executable verifier
+have since been added. Independent user validation is still pending. This is
+project planning, not an application submission or a prediction of an award.
 
 ## Decision
 

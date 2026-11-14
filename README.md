@@ -1,10 +1,24 @@
 # ClaimTrail
 
-Investigate an agent's completion claim beside recorded computer actions and artifact checks. ClaimTrail separates evidence before the claim from later corroboration, shows actor/time/source context, and keeps unresolved scope visible.
+Bind a configured check to the files it checked, then detect when that evidence becomes stale or belongs to a different policy. ClaimTrail also imports native Goose sessions so a reviewer can compare completion claims with original tool results and later corroboration.
 
-**Start here:** [project overview and exploratory findings](docs/PROJECT_OVERVIEW.md). For a presentation with notes and a rehearsal timer, open `web/presentation.html` locally. Its workbench screenshot is synthetic; the separate research interpretations are explicitly AI-assisted.
+**Start here:** [scope and freshness verification](docs/SCOPE_VERIFICATION.md). The verifier uses explicit host-selected policies; it does not automatically determine semantic test coverage. ClaimTrail's original code is [MIT licensed](LICENSE), with [separate third-party and dataset terms](THIRD_PARTY_NOTICES.md).
 
-## Run in one command
+## Review the real repository evidence
+
+```bash
+python3 -B src/review_app.py --verification-report examples/verification/recorded/report.json --port 8768
+```
+
+Open **http://127.0.0.1:8768/**. The packaged captures can be replayed offline without installing the tested repositories or running any recorded commands. This view shows configured scope, invalidation reasons, changed files, original Goose messages and raw receipts. See [results and reproduction](docs/VERIFICATION_RESULTS.md).
+
+![ClaimTrail showing a stale receipt after a controlled source edit in a real More Itertools Goose session](docs/images/claimtrail-scope-desktop.png)
+
+The package includes 30 controlled repository cases, six Goose stages across two sessions, and actual fresh/stale Goose recipe trials. All 36 captured cases replay to their expected contract outcomes. The 43 local software tests pass. These establish implementation behavior, not independently measured accuracy or ordinary agent failure frequency.
+
+Capture a check on your own clone with `src/scope_verification.py run`, then use `verify` against the same host-owned policy. The [guide](docs/SCOPE_VERIFICATION.md) explains the CLI, exit codes and Goose recipe integration. `verify` never executes a recorded command; `run` does.
+
+## Try the invented teaching examples
 
 From the extracted repository root:
 
@@ -36,16 +50,16 @@ The screenshot shows the real, redacted local example with no reviewer labels as
 python3 -B -m unittest discover -s tests -v
 ```
 
-The 29 included tests passed locally with Python site packages disabled. They use invented records, the redacted Goose example, temporary annotations and loopback ports. Tests establish software behavior and source consistency, not the semantic truth of assessments. Hosted CI for this integration has not run.
+The test suite covers import, source pins, annotation boundaries, scope/freshness invalidation and offline replay. It uses invented test records, captured examples, temporary annotations and loopback ports. Tests establish software behavior and source consistency, not the semantic truth of assessments. The repository workflow also replays the packaged captures without executing their commands.
 
-`DELIVERY_MANIFEST.json` lists the included files, byte counts and SHA-256 hashes; it excludes itself. The redacted local Goose example, its provenance manifest and a screenshot of its review are included. AI Village raw/derived dataset records, real annotations, research screenshots, model weights, credentials and council session logs remain excluded. An aggregate research overview and a synthetic UI screenshot are also included.
+`DELIVERY_MANIFEST.json` lists the included files, byte counts and SHA-256 hashes; it excludes itself. Captured verification records, redacted native Goose sessions, provenance and review screenshots are included. AI Village raw/derived records, real annotations, research screenshots, repository clones, model weights, credentials and tool binaries remain excluded.
 
 ## Research code and boundaries
 
-The delivery includes the lexical candidate pipeline, identifier matching, review bundle generation, Parquet-window extraction, optional offline MiniLM retrieval, ranking comparison and independent-label evaluator. See [research reproduction](docs/REPRODUCE_RESEARCH.md). Research mode requires separately authorized source files and, for optional extraction/model steps, existing dependencies. The demo remains independent of those dependencies.
+The earlier exploratory project includes the lexical candidate pipeline, identifier matching, review bundle generation, Parquet-window extraction, optional offline MiniLM retrieval, ranking comparison and independent-label evaluator. See [project overview](docs/PROJECT_OVERVIEW.md) and [research reproduction](docs/REPRODUCE_RESEARCH.md). Research mode requires separately authorized source files and, for optional extraction/model steps, existing dependencies. The demo and verification replay are independent of those dependencies. The earlier `web/presentation.html` uses synthetic workbench imagery and is separate from the new real-repository evidence.
 
 The 25 episode assessments were assistant-authored; independent human labels remain absent. The two development interpretations are separate from that queue. Ranking disagreement is not accuracy, later evidence is not proof of earlier success, and temporal proximity is not proof of transmission. The selected export is partial and screenshots were not inspected.
 
 Research source: **AI Digest, “AI Village dataset,” 2026**, [dataset card](https://huggingface.co/datasets/aidigestorg/ai-village). Research/analysis terms, attribution and publication notification apply. No training or fine-tuning was performed. See [project overview](docs/PROJECT_OVERVIEW.md) for revisions and limitations.
 
-Project documentation is AI-assisted. The participant must independently write submission-form responses; this README is project material, not a form-answer draft.
+Project documentation and grant drafts are AI-assisted. Independent reviewer/user validation remains pending; the [review guide](docs/REVIEWER_GUIDE.md) describes the work still needed.
