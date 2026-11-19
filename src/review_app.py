@@ -82,12 +82,17 @@ def load_reviews(path: Path = LABELS) -> dict:
 
 def save_reviews(reviews: dict, path: Path = LABELS) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent,
-                                     prefix=".claimtrail_reviews_", delete=False) as fh:
-        temp_path = Path(fh.name)
-        os.chmod(temp_path, 0o600)
-        json.dump(reviews, fh, ensure_ascii=False, indent=2)
-    os.replace(temp_path, path)
+    temp_path = None
+    try:
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent,
+                                         prefix=".claimtrail_reviews_", delete=False) as fh:
+            temp_path = Path(fh.name)
+            os.chmod(temp_path, 0o600)
+            json.dump(reviews, fh, ensure_ascii=False, indent=2)
+        os.replace(temp_path, path)
+    finally:
+        if temp_path is not None:
+            temp_path.unlink(missing_ok=True)
 
 
 class ReviewServer(HTTPServer):
@@ -419,7 +424,10 @@ class Handler(BaseHTTPRequestHandler):
         except ValueError as exc:
             return self._error(str(exc), 409)
         saved[cid] = review
-        save_reviews(saved, self.server.labels_path)
+        try:
+            save_reviews(saved, self.server.labels_path)
+        except OSError:
+            return self._error("Review was not saved. Keep your edits and retry after checking the labels file storage.", 500)
         return self._json({"saved": True, "reviewed_at_utc": review["reviewed_at_utc"],
                            "revision": revision(review), "integrity": integrity_notice(review),
                            "summary": summary, "assessment_policy": review["assessment_policy"]})

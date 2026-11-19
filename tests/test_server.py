@@ -7,6 +7,7 @@ import tempfile
 import threading
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from demo_data import uid
@@ -80,6 +81,21 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(self.request("/api/review/" + self.cid, "POST", payload)[0], 200)
         code, export = self.request("/api/export")
         self.assertEqual(export[self.cid]["units"][0]["notes"], "Updated synthetic annotation")
+
+    def test_save_failure_preserves_labels_cleans_temp_and_allows_retry(self):
+        payload = self.payload(uid("deploy-later"))
+        code, saved = self.request("/api/review/" + self.cid, "POST", payload)
+        self.assertEqual(code, 200)
+        original = self.labels.read_bytes()
+        payload["base_revision"] = saved["revision"]
+        payload["units"][0]["notes"] = "Retry this unsaved annotation"
+        with patch("review_app.os.replace", side_effect=OSError("disk unavailable")):
+            code, result = self.request("/api/review/" + self.cid, "POST", payload)
+        self.assertEqual(code, 500)
+        self.assertIn("not saved", result["error"])
+        self.assertEqual(self.labels.read_bytes(), original)
+        self.assertEqual(list(self.labels.parent.glob(".claimtrail_reviews_*")), [])
+        self.assertEqual(self.request("/api/review/" + self.cid, "POST", payload)[0], 200)
 
     def test_search_filters_exclude_future_other_actor_and_claim_echo(self):
         path = "/api/search?episode_id=" + self.cid + "&q=a1b2c3d&scope=claimant&phase=before"
