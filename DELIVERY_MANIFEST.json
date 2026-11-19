@@ -15,7 +15,7 @@
     },
     "README.md": {
       "bytes": 6604,
-      "sha256": "4164c8c3f60331ff05fa6997e477e103ba24215038990abdf936b10e2e18d12b"
+      "sha256": "fb06911f658f691e0158081bea445cf97f4c83ff9ca73a1c3ea1eb8ca6559fe3"
     },
     "THIRD_PARTY_NOTICES.md": {
       "bytes": 1582,
@@ -59,7 +59,7 @@
     },
     "docs/VERIFICATION_RESULTS.md": {
       "bytes": 9537,
-      "sha256": "e80807d297d195ea79b397efaee15c3c0a5ba1e720aa71aafc0f862182950d55"
+      "sha256": "04d78d0e5d6269a757b0037dcab3d92d746b8e5a2ff8d1e9c4b96df3325c8a11"
     },
     "docs/images/claimtrail-goose-desktop.png": {
       "bytes": 82121,
@@ -214,8 +214,8 @@
       "sha256": "bfd361dd002cc0ce877405ee5f57a9bd8e5a435cf2fd9c7a64388bbdbfe2100e"
     },
     "src/review_app.py": {
-      "bytes": 28217,
-      "sha256": "2c094f3749aab40d98439046d9c70d8ecead28d333d35262cdb1104d12d5ac37"
+      "bytes": 28532,
+      "sha256": "cc13817b314fb1f25f94002bd8e990aaba08e57467e47efca4b75a80b2ba135c"
     },
     "src/review_bundle.py": {
       "bytes": 7817,
@@ -262,8 +262,8 @@
       "sha256": "2714f1839ab4e1ffc4354db8c942e581d04ad75144080768dd592ee0352bcc17"
     },
     "tests/test_server.py": {
-      "bytes": 11917,
-      "sha256": "65434a4501cf32ce3eff8956a2b1f197327d120b96b84cb07019fe4fbb0316df"
+      "bytes": 12859,
+      "sha256": "1c7e63fed6996d35963628b78bfc281eba041871b37f02b14d428b26a628f00e"
     },
     "tests/test_verification_report.py": {
       "bytes": 6633,
