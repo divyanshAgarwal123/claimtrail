@@ -42,8 +42,8 @@
       "sha256": "6f0f8382c52c0551acfb76720998f5767d8432a6650f969c523c5cd43b717043"
     },
     "docs/SCOPE_VERIFICATION.md": {
-      "bytes": 7020,
-      "sha256": "eda8ac2e541b8b8b51dda65caea9940938652141445e353c96ee3947e2a83e10"
+      "bytes": 7228,
+      "sha256": "5ab24d20ebe97e5506e7e454f6eaeca145a2cbafffcf9e834978b52cff96b09b"
     },
     "docs/SPIRAL_FIT_REVIEW.md": {
       "bytes": 7389,
@@ -226,8 +226,8 @@
       "sha256": "2cd3a6862eed28325e2468f1224da4aa1de9764c852b5aab6afbc10f8a78c2cc"
     },
     "src/scope_verification.py": {
-      "bytes": 15034,
-      "sha256": "88ba599b64cd929eb6569323b5c82619e08b5cf394862c111711c17fe74e064a"
+      "bytes": 15084,
+      "sha256": "3e62adc5605982d369003403052826d52c4417b7ea5948345b87935830db36a1"
     },
     "src/semantic_retrieval.py": {
       "bytes": 4409,
@@ -258,8 +258,8 @@
       "sha256": "220abca95d3598ed185b7835edc1a3017237718601ec1714398974068fd97683"
     },
     "tests/test_scope_verification.py": {
-      "bytes": 9238,
-      "sha256": "2714f1839ab4e1ffc4354db8c942e581d04ad75144080768dd592ee0352bcc17"
+      "bytes": 10749,
+      "sha256": "46687ebf44662b7ee2552021c4b9d8753344033d7e403bd5a6150277b6a65fa8"
     },
     "tests/test_server.py": {
       "bytes": 11917,
