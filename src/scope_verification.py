@@ -257,7 +257,7 @@ def write_json(path: Path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=".claimtrail-", dir=path.parent)
     try:
-        with os.fdopen(fd, "w") as stream:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
             json.dump(value, stream, indent=2, ensure_ascii=False, allow_nan=False)
             stream.write("\n")
         os.replace(temporary, path)
@@ -281,12 +281,12 @@ def main():
         destinations = [args.receipt, *([args.observation] if args.observation else [])]
         if len({p.resolve() for p in [args.policy, *destinations]}) != 1 + len(destinations):
             raise ValueError("policy, receipt and observation must use separate files")
-        spec = policy(json.loads(args.policy.read_text()))
+        spec = policy(json.loads(args.policy.read_text(encoding="utf-8")))
         if args.action == "run":
             receipt = run_check(args.repo, spec)
             write_json(args.receipt, receipt)
         else:
-            receipt = json.loads(args.receipt.read_text()) if args.receipt.exists() else None
+            receipt = json.loads(args.receipt.read_text(encoding="utf-8")) if args.receipt.exists() else None
         observation = observe(args.repo, spec, receipt)
         if args.observation:
             write_json(args.observation, observation)

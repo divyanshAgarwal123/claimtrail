@@ -139,6 +139,26 @@ class ScopeVerificationTests(unittest.TestCase):
             os.mkfifo(self.root / "src/fifo")
             with self.assertRaisesRegex(ValueError, "non-regular"): snapshot(self.root, self.spec)
 
+    @unittest.skipUnless(os.name == "posix", "C locale regression requires POSIX")
+    def test_cli_unicode_records_round_trip_without_utf8_locale(self):
+        directory = self.root.parent
+        spec_path, receipt, observation = [directory / (s + ".json") for s in ["policy", "receipt", "observation"]]
+        spec = policy({**self.spec, "description": "Unicode check: café हिन्दी"})
+        spec_path.write_text(json.dumps(spec, ensure_ascii=False), encoding="utf-8")
+        env = {**os.environ, "CLAIMTRAIL_ALLOWED_ROOT": str(directory),
+               "LC_ALL": "C", "PYTHONUTF8": "0", "PYTHONCOERCECLOCALE": "0"}
+        command = [sys.executable, "-B", str(Path(__file__).resolve().parents[1] / "src/scope_verification.py"),
+                   "run", "--repo", str(self.root), "--policy", str(spec_path), "--receipt", str(receipt),
+                   "--observation", str(observation)]
+        for action in ["run", "verify"]:
+            command[3] = action
+            result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", env=env)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(json.loads(result.stdout)["status"], "verified")
+        saved = json.loads(receipt.read_text(encoding="utf-8"))
+        self.assertEqual(saved["policy"]["description"], spec["description"])
+        self.assertEqual(verify(spec, saved, json.loads(observation.read_text(encoding="utf-8")))["status"], "verified")
+
     def test_cli_exit_codes_receipt_round_trip_and_source_destination_guards(self):
         directory = self.root.parent
         spec_path, receipt, observation = [directory / (s + ".json") for s in ["policy", "receipt", "observation"]]

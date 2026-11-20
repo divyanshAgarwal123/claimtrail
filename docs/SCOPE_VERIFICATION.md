@@ -129,3 +129,7 @@ The Goose session report preserves the actual tool result and exact model text.
 Its host observation is taken after the session returns. It is not backdated to
 the model's message time. Plain historical Goose exports without these receipts
 retain the original importer's “freshness unverified” boundary.
+
+### JSON text encoding
+
+Policies, receipts and observations use UTF-8, independently of the host locale. Non-ASCII descriptions and captured output are preserved when files are transferred between machines.
